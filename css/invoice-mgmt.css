@@ -1,0 +1,137 @@
+/* ══ INVOICE MANAGEMENT PHASE 2 ═════════════════════════════════════════════
+   Additive: .ims-* selectors only. Everything visible is the shared furniture
+   (main.css, leaves.css, attendance-settings.css, cs-agreements.css); this
+   file only settles the few places where those parts meet in a new way.
+   Colours, radii and type all come from the existing tokens.
+   ========================================================================== */
+
+/* Payroll → Payments / Invoice Settings. The custom select stands 42px by
+   default; beside the 36px Due Days input it sat six pixels taller. The same
+   correction the Leaves form makes (css/leave-settings.css), scoped here. */
+.ims-pay-grid .cs-trigger{height:36px}
+
+/* ── Contract panel → Advance Payment ── */
+/* The panel's own small action button (the contract panel's Edit) in both the
+   solid and the outline weight. */
+.ims-btn-sm{padding:5px 14px;font-size:12px;display:inline-flex;align-items:center;gap:5px}
+.ims-acts{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+
+
+.ims-req-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.ims-req-no{font-size:15px;font-weight:700;color:var(--navy);margin-right:2px}
+/* Tags (Internal only, Values locked...) are not statuses: black ink on white. */
+.lp-status-badge.ims-badge.ims-tag{background:#fff;color:var(--navy);border-color:var(--border)}
+.ims-dash{color:var(--navy);font-weight:600}
+.ims-tag{min-width:0;padding:1px 8px;font-size:10px;margin-left:6px;vertical-align:1px;color:var(--gray)}
+.ims-sub-title{display:inline-flex;align-items:center;gap:8px}
+/* Dates, amounts and references stay on one line; only free text wraps. */
+.ims-table th,.ims-table td{white-space:nowrap}
+.ims-table .ims-wrap{white-space:normal}
+.ims-adv .pm-ts-stat-val{font-size:17px}
+/* Written order is the reading order here: Sent On and the reason close the grid. */
+.ims-adv .lp-sb-field-card.is-wide{order:0}
+
+.ims-link-row{display:flex;align-items:center;gap:8px;margin-top:12px;padding:10px 14px;
+  border:1px solid var(--border);border-radius:10px;background:#fff;font-size:13px;color:var(--navy)}
+.ims-link-row svg{flex-shrink:0;color:var(--gray)}
+.ims-link-row .add-link{margin-left:auto;padding:0}
+
+
+/* ── Modals ── */
+.ims-modal-wide{width:min(820px,94vw)}
+.ims-modal-grid-after{margin:16px 0 0}
+.ims-textarea{resize:vertical;min-height:72px;height:auto;line-height:1.5}
+.ims-recips{display:flex;flex-direction:column;gap:6px}
+.ims-recips .hd-check{justify-content:flex-start}
+/* Missing required fields: the agreements modal's flag. */
+#ims-host .is-invalid{border-color:var(--st-bad-fg)!important;background:var(--st-bad-bg)}
+
+/* Document preview: the ADT document page, two facts side by side. */
+.ims-doc-parties{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media (max-width:720px){.ims-doc-parties{grid-template-columns:1fr}}
+
+/* Contract Logs → Advance Payment: the Action field and the Send recipients
+   sit between Status and Comment, like the employee Logs block. */
+#ims-lg .cs-wrap{margin-bottom:2px}
+#ims-lg .ims-recips{margin-bottom:4px}
+/* The request view's head: number + badges on the left, documents right. */
+.ims-adv .lp-sb-view-header .ims-req-head,.ims-rcv .lp-sb-view-header .ims-req-head{margin:0}
+
+/* ── Order panel → Receivable ── */
+.ims-rcv .pm-ts-stat{padding:8px 10px}
+.ims-rcv .pm-ts-stat-val{font-size:15px;font-weight:600}
+.ims-rcv .pm-ts-stat-lbl{margin-top:2px}
+.ims-rcv .lp-sb-field-card.is-wide{order:0}
+/* Twelve columns do not fit the panel: the table scrolls sideways inside it. */
+.ims-table-scroll{overflow-x:auto;scrollbar-width:thin}
+.ims-row{cursor:pointer}
+.ims-row:hover td{background:var(--row-hover)}
+.ims-back{padding:0;margin:0 0 12px}
+.ims-payable{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding:12px 14px;
+  border:1px solid var(--border);border-radius:10px;background:#fff;font-size:13px;color:var(--navy)}
+.ims-payable b{font-size:15px}
+
+
+/* Pop-up header: Preview sits beside the close button. */
+.ims-hdr-acts{display:flex;align-items:center;gap:10px;margin-left:auto}
+
+/* Send pop-up: the attached PDF, as a neutral file chip (opens Preview). */
+.ims-attach{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;max-width:100%;padding:8px 14px 8px 8px;
+  border:1px solid var(--border);border-radius:10px;background:#fff;font-family:inherit;font-size:13px;
+  font-weight:600;color:var(--navy);cursor:pointer}
+.ims-attach:hover{border-color:var(--btn-accent)}
+.ims-attach-ico{width:30px;height:30px;border-radius:8px;flex-shrink:0;display:inline-flex;align-items:center;
+  justify-content:center;background:var(--light);color:var(--navy)}
+.ims-attach-ico svg{width:15px;height:15px}
+.ims-recips .hd-check span{overflow:hidden;text-overflow:ellipsis}
+
+
+
+/* Payroll tab: ON / OFF in view, and the edit actions under the last card. */
+.ims-onoff{font-size:13px;font-weight:700;color:var(--navy)}
+.ims-pay-actions{margin-top:16px}
+/* Receivable tab: Select Year / Select Invoice row, the Expand button and pop-up */
+.ims-rcv-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px}
+.ims-rcv-select{border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-family:inherit;font-size:13px;color:var(--navy);cursor:pointer;outline:none;background:#fff}
+.ims-expand-btn{width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--navy);cursor:pointer;padding:0}
+.ims-expand-btn:hover{background:#f8fafc}
+.ims-modal-xl{width:min(1360px,96vw);max-height:90vh;overflow:auto}
+/* Invoice detail header: Preview / Download PDF kept compact */
+.ims-rcv .ims-acts .ims-btn-sm{height:28px;min-height:28px;padding:0 10px;font-size:11.5px;gap:4px;border-radius:7px}
+.ims-rcv .ims-acts .ims-btn-sm svg{width:12px;height:12px}
+.ims-rcv .ims-acts .ims-btn-sm{width:92px;justify-content:center}
+.ims-inv-stats{gap:8px}
+.ims-inv-stats.ims-stats-6{grid-template-columns:repeat(6,1fr)}
+.ims-rcv .ims-inv-stats .pm-ts-stat{padding:7px 6px}
+.ims-rcv .ims-inv-stats .pm-ts-stat-val{font-size:13px;font-weight:600}
+.ims-rcv .ims-inv-stats .pm-ts-stat-lbl{font-size:10.5px}
+.ims-util{display:block;margin-top:2px;font-size:10px;font-weight:600;color:var(--navy)}
+/* Client view */
+.pm-ts-stats.ims-stats-3{grid-template-columns:repeat(3,1fr)}
+.ims-cl-instr{grid-column:1/-1}
+.ims-pay-no{font-size:12px;font-weight:600;color:var(--gray);margin:4px 0 8px}
+
+/* ── Client portal (js/client-portal.js) ──
+   Invoice tab: one card per month, header toggles its table. */
+.cp-month{border:1px solid var(--border);border-radius:10px;background:#fff;margin-bottom:12px;overflow:hidden}
+.cp-month-hd{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;border:none;background:none;font-family:inherit;cursor:pointer;text-align:left}
+.cp-month-hd:hover{background:#f8fafc}
+.cp-month-chev{display:inline-flex;color:var(--gray);transform:rotate(-90deg);transition:transform .16s}
+.cp-month-chev svg{width:12px;height:12px}
+.cp-month.is-open .cp-month-chev{transform:none}
+.cp-month-name{font-size:14px;font-weight:700;color:var(--navy);min-width:96px}
+.cp-month-due{font-size:13px;color:var(--gray)}
+.cp-month-due b{color:var(--navy);font-weight:700}
+.cp-month.is-open .cp-month-hd{border-bottom:1px solid var(--border)}
+.cp-month .ims-table tr:last-child td{border-bottom:none}
+.cp-act{display:flex;align-items:center;gap:8px}
+.ims-sub-time{font-size:11.5px;color:var(--gray);margin-top:2px}
+.ims-dl-btn{width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--navy);cursor:pointer;padding:0;flex-shrink:0}
+.ims-dl-btn:hover{background:#f8fafc}
+/* Receivable line items: fixed widths so rows line up */
+.ims-table td{vertical-align:middle;white-space:nowrap}
+.ims-table td .ims-badge{width:88px;justify-content:center;text-align:center;box-sizing:border-box;margin:0}
+.ims-st-cell .ct-dots-btn{display:none}
+/* Invoice Status: the same button as the Payments list's Invoice Status */
+.ims-st-cell .ct-action-btn span{overflow:hidden;text-overflow:ellipsis}
+.ims-act-cell{display:flex;align-items:center}

@@ -1,0 +1,2160 @@
+﻿<!DOCTYPE html>
+<html lang="en"><head>
+<!-- Extracted from single-file bundle. Open this file directly in Chrome. -->
+<script>window.__resources = {"logo": "assets/logo.png"};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADT Agent &amp; Support Mode — V2</title>
+
+
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/cost-calc.css">
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/leaves.css">
+<link rel="stylesheet" href="css/dashboard-multiview.css">
+<!-- Loaded last: the button system is authoritative over every legacy button rule. -->
+<link rel="stylesheet" href="css/buttons.css">
+<!-- After buttons.css on purpose. These two add motion and inline row actions
+     on top of the finished component set; neither redefines a colour or a
+     size, so order only matters for the transitions they layer on. -->
+<link rel="stylesheet" href="css/motion.css">
+<link rel="stylesheet" href="css/quick-actions.css">
+<!-- The timesheet's export drawer. Additive: it defines only .tsx-* selectors
+     and reuses the shared tokens, so it can load anywhere after main.css. -->
+<link rel="stylesheet" href="css/export-panel.css">
+<!-- Company Settings' Attendance tab, plus apMS (the multi-select). Additive:
+     .csa-* / .ms-* selectors only, everything else borrowed from main.css. -->
+<link rel="stylesheet" href="css/attendance-settings.css">
+<!-- The Holidays page's "View Optional Holidays" overlay. Additive: .oh-* /
+     .tb-opt-hol selectors only; the tabs are main.css's own .cc-tab. -->
+<link rel="stylesheet" href="css/optional-holidays.css">
+<!-- Claiming attendance on a weekly off or holiday. Additive: .ar-* only,
+     plus one .ts-day-pill.closed the timesheet grid now needs. -->
+<link rel="stylesheet" href="css/attendance-request.css">
+<!-- Leaves tab: one scoped height correction; everything else is shared. -->
+<link rel="stylesheet" href="css/leave-settings.css">
+<!-- How a day is judged: the rail colour, the day-panel tag and the legend. -->
+<link rel="stylesheet" href="css/day-status.css">
+<!-- Two fit rules for the longer employee status vocabulary; after main.css,
+     because it overrides .lp-status-badge. -->
+<link rel="stylesheet" href="css/employee-lifecycle.css">
+<link rel="stylesheet" href="css/cs-agreements.css">
+<!-- Company Settings' Module Control tab. Additive: .mc-* only. -->
+<link rel="stylesheet" href="css/module-control.css">
+<!-- The four-step Create New Employee wizard. Builds on the form system in
+     main.css; adds only the stepper, chips, checklist and access preview. -->
+<link rel="stylesheet" href="css/employee-add.css">
+<!-- The Immigration and Contractor intake forms. Reuses main.css's colour, shape
+     and toggle tokens; owns its own field and checklist chrome. -->
+<link rel="stylesheet" href="css/contract-intake.css">
+<!-- Invoice Management Phase 2. Additive: .ims-* only, on top of the shared
+     Company Settings, sidebar and modal parts. -->
+<link rel="stylesheet" href="css/invoice-mgmt.css">
+<!-- LAST: settles control height and button shape across every creation form,
+     popup and page alike. Must win over the per-screen sheets above. -->
+<link rel="stylesheet" href="css/form-system.css"></head>
+<body>
+<!-- ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢Ãƒâ€šÃ‚Â ADT DASHBOARD ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢Ãƒâ€šÃ‚Â -->
+<div id="v-adt" class="view active">
+  <div class="topbar">
+    <div class="topbar-left" style="font-family: Inter">
+      <div class="adt-logo">
+        <img src="assets/logo.png" alt="Opendhi">
+      </div>
+      <span class="topbar-page" id="adt-page-title">Dashboard</span>
+      <button class="tb-page-add" id="tb-page-add-btn" style="display:none" title="Add new"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+      <button class="tb-cost-calc" id="tb-cost-calc-btn" style="display:none" onclick="openCostCalculator()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg> Cost Calculator</button>
+      <!-- Same slot, same treatment as Cost Calculator above; renderer.js shows
+           it on the Holidays page and hides it everywhere else. -->
+      <button class="tb-opt-hol" id="tb-opt-hol-btn" style="display:none" onclick="openOptionalHolidays()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="12" cy="16" r="1.6" fill="currentColor" stroke="none"/></svg> Calendar</button>
+    </div>
+    <div class="topbar-right" style="position:relative">
+      <button class="tb-icon" onclick="openSearch()" title="Search (Ctrl+K)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></button>
+      <button class="tb-icon" onclick="toggleNotif(event)" id="notif-trigger"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></button>
+      <!-- Entity dropdown -->
+      <div class="hdr-dd-wrap" id="entity-dd-wrap">
+        <div class="company-sel" onclick="toggleHdrDD('entity-dd')" id="entity-trigger">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          Dhi Hyperlocal
+          <svg class="hdr-dd-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="hdr-dd-panel" id="entity-dd">
+          <div class="hdr-dd-header">
+            <div class="hdr-dd-entity-logo">DH</div>
+            <div>
+              <div class="hdr-dd-title">Dhi Hyperlocal</div>
+              <div class="hdr-dd-subtitle">Entity ID: ENT-00421</div>
+            </div>
+          </div>
+          <div class="hdr-dd-divider"></div>
+          <div class="hdr-dd-info-row"><span class="hdr-dd-info-label">Type</span><span class="hdr-dd-info-val">EOR Entity</span></div>
+          <div class="hdr-dd-info-row"><span class="hdr-dd-info-label">Country</span><span class="hdr-dd-info-val">India</span></div>
+          <div class="hdr-dd-divider"></div>
+          <button class="hdr-dd-item" onclick="closeAllHdrDD();navigatePage('switch-entity')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Switch Entity
+          </button>
+        </div>
+      </div>
+      <!-- User profile dropdown -->
+      <div class="hdr-dd-wrap" id="user-dd-wrap">
+        <div class="user-sel" onclick="toggleHdrDD('user-dd')" id="user-trigger">
+          <div class="user-avatar-sm">PP</div>
+          Pallavi Parate
+          <svg class="hdr-dd-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="hdr-dd-panel hdr-dd-panel-right" id="user-dd">
+          <div class="hdr-dd-header">
+            <div class="user-avatar-sm" style="width:36px;height:36px;font-size:13px;flex-shrink:0">PP</div>
+            <div>
+              <div class="hdr-dd-title">Pallavi Parate</div>
+              <div class="hdr-dd-subtitle">pallavi@dhihyperlocal.com</div>
+            </div>
+          </div>
+          <div class="hdr-dd-info-row"><span class="hdr-dd-info-label">Role</span><span class="hdr-dd-info-val">Admin</span></div>
+          <div class="hdr-dd-info-row"><span class="hdr-dd-info-label">Last login</span><span class="hdr-dd-info-val">Today, 9:41 AM</span></div>
+          <div class="hdr-dd-divider"></div>
+          <button class="hdr-dd-item" onclick="closeAllHdrDD();navigatePage('my-profile')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            My Profile
+          </button>
+          <button class="hdr-dd-item" onclick="closeAllHdrDD();raiseTicketFromHelp()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Help & Support
+          </button>
+          <div class="hdr-dd-divider"></div>
+          <button class="hdr-dd-item hdr-dd-item-danger" onclick="closeAllHdrDD()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sign Out
+          </button>
+        </div>
+      </div>
+      <div id="notif-pop" class="notif-pop hidden"></div>
+    </div>
+  </div>
+  <div class="content-area">
+    <div class="sidebar" id="adt-sidebar"></div>
+    <div class="page-content" id="adt-content">
+      <div class="dashboard-tabs-wrap">
+        <div class="dashboard-tabs" id="dashboard-tabs">
+          <button class="tab-btn active" data-tab="employee" onclick="switchDashboard('employee')">Employee Dashboard</button>
+          <button class="tab-btn" data-tab="hr" onclick="switchDashboard('hr')">HR Dashboard</button>
+          <button class="tab-btn" data-tab="manager" onclick="switchDashboard('manager')">Reporting Manager</button>
+          <button class="tab-btn" data-tab="super-admin" onclick="switchDashboard('super-admin')">Opendhi Super Admin</button>
+          <button class="tab-btn" data-tab="finance-admin" onclick="switchDashboard('finance-admin')">OpenDhi Finance Admin</button>
+          <button class="tab-btn" data-tab="finance-admin-basic" onclick="switchDashboard('finance-admin-basic')">Finance Admin</button>
+          <button class="tab-btn" data-tab="csm" onclick="switchDashboard('csm')">CSM</button>
+          <button class="tab-btn" data-tab="opendhi-compliance" onclick="switchDashboard('opendhi-compliance')">Opendhi Compliance Admin</button>
+          <button class="tab-btn" data-tab="opendhi-ops" onclick="switchDashboard('opendhi-ops')">Opendhi Ops Admin</button>
+          <button class="tab-btn" data-tab="entity-owner" onclick="switchDashboard('entity-owner')">Entity Owner</button>
+        </div>
+        <div class="dt-edge dt-edge-left"><button type="button" class="dt-scroll-btn" aria-label="Scroll tabs left" onclick="scrollDashboardTabs(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="15 18 9 12 15 6"/></svg></button></div>
+        <div class="dt-edge dt-edge-right"><button type="button" class="dt-scroll-btn" aria-label="Scroll tabs right" onclick="scrollDashboardTabs(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="9 18 15 12 9 6"/></svg></button></div>
+      </div>
+      
+      <!-- EMPLOYEE DASHBOARD VIEW -->
+      <div class="dashboard-view active" id="employee-view">
+
+        <!-- Page Header -->
+        <div class="hr-header">
+          <div class="hr-header-title">Employee Dashboard</div>
+          <div class="hr-header-desc">Welcome back, John Doe. Here's your workspace overview.</div>
+        </div>
+
+        <!-- Metric Cards -->
+        <!-- NO PAYROLL STATUS CARD, HERE OR ON ANY OTHER DASHBOARD. The other
+             four sites carry a one-line pointer back to this note.
+
+             It read "Ready / Current cycle is on track" on every dashboard,
+             always, for every role - a hardcoded green tile that answered a
+             question nobody had asked and would have gone on saying "Ready"
+             through a payroll that wasn't. Where a dashboard genuinely needs
+             to say something about payroll it already does, and actionably:
+             Payroll Blockers ("4 - resolve before payroll run") on HR, Super
+             Admin, Ops and Entity Owner, and Latest Payslip here, which is the
+             only payroll fact an employee acts on.
+
+             This row is 2 tiles + a wide attendance card. It used to buy that
+             width with its own column count (repeat(2,1fr) 1.6fr), which made
+             its tiles 324px against every other dashboard's 289px. It now sits
+             in the standard 4-col track and the attendance card spans two
+             columns, so the tiles measure the same here as everywhere else and
+             the row still ends flush. -->
+        <div class="hr-band"><span class="hr-band-title">Key Metrics</span><span class="hr-band-rule"></span></div>
+        <div class="hr-stat-grid">
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Leave Balance</div>
+            <div class="hr-stat-number">12</div>
+            <div class="hr-stat-sub green">&#x2191; 3 days remaining this month</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Latest Payslip</div>
+            <div class="hr-stat-number">Apr</div>
+            <div class="hr-stat-sub">April 2025 available</div>
+          </div>
+          <!-- ATTENDANCE — see the "ATTENDANCE CLOCK" blocks in main.css and renderer.js.
+               Three resting states (idle / clocked in / done for the day) share one
+               card, with an animation stage layered over them that only exists while
+               a punch is being made. The stage is absolutely positioned so the card
+               never changes size mid-sequence and never nudges the grid around it. -->
+          <div class="attendance-card hr-stat-span2 att is-idle" id="att-card" style="min-width:0">
+            <div class="att-title">Attendance <a href="#">View</a></div>
+            <div class="att-main">
+              <!-- The animation. Only the dial is aria-hidden: it is decoration over
+                   facts stated in text. The stage copy is NOT hidden, because the
+                   refusal state puts real controls inside it. -->
+              <div class="att-stage" id="att-stage">
+                <svg class="att-dial" viewBox="0 0 100 100" aria-hidden="true">
+                  <circle class="att-dial-track" cx="50" cy="50" r="41"/>
+                  <circle class="att-dial-sweep" cx="50" cy="50" r="41"/>
+                  <circle class="att-dial-face" cx="50" cy="50" r="33"/>
+                  <g class="att-dial-ticks">
+                    <line x1="50" y1="21" x2="50" y2="26"/><line x1="79" y1="50" x2="74" y2="50"/>
+                    <line x1="50" y1="79" x2="50" y2="74"/><line x1="21" y1="50" x2="26" y2="50"/>
+                    <line x1="64.5" y1="24.9" x2="62" y2="29.2"/><line x1="75.1" y1="35.5" x2="70.8" y2="38"/>
+                    <line x1="75.1" y1="64.5" x2="70.8" y2="62"/><line x1="64.5" y1="75.1" x2="62" y2="70.8"/>
+                    <line x1="35.5" y1="75.1" x2="38" y2="70.8"/><line x1="24.9" y1="64.5" x2="29.2" y2="62"/>
+                    <line x1="24.9" y1="35.5" x2="29.2" y2="38"/><line x1="35.5" y1="24.9" x2="38" y2="29.2"/>
+                  </g>
+                  <line class="att-hand att-hand-h" id="att-hand-h" x1="50" y1="50" x2="50" y2="33"/>
+                  <line class="att-hand att-hand-m" id="att-hand-m" x1="50" y1="50" x2="50" y2="25"/>
+                  <circle class="att-pin" cx="50" cy="50" r="2.6"/>
+                  <path class="att-seal" d="M37 50.5 L46 59.5 L64 41.5"/>
+                  <path class="att-cross" d="M40 40 L60 60 M60 40 L40 60"/>
+                </svg>
+                <div class="att-stage-copy" id="att-stage-copy">
+                  <div class="att-stage-label" id="att-stage-label">Clocking in</div>
+                  <div class="att-stage-time" id="att-stage-time">--:-- --</div>
+                  <div class="att-stage-sub" id="att-stage-sub">Hyderabad</div>
+                  <!-- Only ever shown on the refusal state. The stage is
+                       aria-hidden, so these are exposed on their own. -->
+                  <div class="att-stage-actions" id="att-stage-actions" hidden>
+                    <button class="att-stage-btn is-primary" id="att-retry-btn" onclick="attRetryLocation()">Allow Location Access</button>
+                    <button class="att-stage-btn" onclick="attCancelClockIn()">Cancel</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Resting view. Which rows show is driven by the card's state class. -->
+              <div class="att-rest" id="att-rest">
+                <!-- Before and during the shift: one row, one fact. -->
+                <div class="att-row att-row-live">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Clock-in Time <span class="att-val" id="att-clockin-time">--:-- --</span>
+                </div>
+                <!-- After it: the two times are one fact — a span with a start
+                     and an end — so they are set side by side and read as one,
+                     rather than as two unrelated rows that happen to be near
+                     each other. Only rendered on the clocked-out state. -->
+                <div class="att-span">
+                  <div class="att-span-cell">
+                    <div class="att-span-label">Clocked in</div>
+                    <div class="att-span-time" id="att-span-in">--:-- --</div>
+                  </div>
+                  <svg class="att-span-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>
+                  <div class="att-span-cell">
+                    <div class="att-span-label">Clocked out</div>
+                    <div class="att-span-time" id="att-span-out">--:-- --</div>
+                  </div>
+                </div>
+                <div class="att-row">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  Location <span class="att-val" id="att-location">Hyderabad</span>
+                </div>
+                <div class="att-foot">
+                  <span class="att-logged" id="att-logged-time"><span class="att-live-dot"></span>Logged Time — 00h 00m</span>
+                  <button class="clock-btn" id="att-clock-btn" onclick="toggleClock()">Clock In</button>
+                </div>
+              </div>
+            </div>
+            <p class="sr-only" id="att-live" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <!-- Action Required -->
+        <div class="hr-section" style="margin-bottom:14px">
+          <div class="hr-section-header">
+            <div class="hr-section-title">Action Required</div>
+          </div>
+          <table class="hr-leave-table" style="width:100%">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Type</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="hr-emp-name">Acknowledge IT Policy 2025</span></td>
+                <td style="color:var(--gray)">Policy Acknowledgement</td>
+                <td style="color:var(--gray)">20 May 2025</td>
+                <td><span class="lp-status-badge pending">Pending</span></td>
+                <td><button class="hr-action-btn neutral">Acknowledge</button></td>
+              </tr>
+              <tr>
+                <td><span class="hr-emp-name">Submit May Expenses</span></td>
+                <td style="color:var(--gray)">Expense Report</td>
+                <td style="color:var(--gray)">25 May 2025</td>
+                <td><span class="lp-status-badge pending">Pending</span></td>
+                <td><button class="hr-action-btn neutral">Submit</button></td>
+              </tr>
+              <tr>
+                <td><span class="hr-emp-name">Update Emergency Contact</span></td>
+                <td style="color:var(--gray)">Profile Update</td>
+                <td style="color:var(--gray)">—</td>
+                <td><span class="lp-status-badge pending">Pending</span></td>
+                <td><button class="hr-action-btn neutral">Update</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Payroll + Leave Requests -->
+        <div class="hr-grid-2">
+          <div class="hr-section">
+            <div class="hr-section-header">
+              <div class="hr-section-title">Payroll</div>
+              <a class="hr-section-link" href="javascript:void(0)" onclick="navigatePage('payroll',true)">View All</a>
+            </div>
+            <div class="emp-payslip-row" style="cursor:pointer" onclick="navigatePage('payroll',true)">
+              <div>
+                <div class="emp-payslip-month">April 2025</div>
+                <div class="emp-payslip-sub">Processed 01 May 2025</div>
+              </div>
+              <div style="text-align:right">
+                <div class="emp-payslip-amount">&#8377;1,25,000</div>
+                <span class="lp-status-badge approved">Paid</span>
+              </div>
+            </div>
+            <div class="emp-payslip-row" style="cursor:pointer" onclick="navigatePage('payroll',true)">
+              <div>
+                <div class="emp-payslip-month">March 2025</div>
+                <div class="emp-payslip-sub">Processed 01 Apr 2025</div>
+              </div>
+              <div style="text-align:right">
+                <div class="emp-payslip-amount">&#8377;1,25,000</div>
+                <span class="lp-status-badge approved">Paid</span>
+              </div>
+            </div>
+            <div class="emp-payslip-row" style="cursor:pointer" onclick="navigatePage('payroll',true)">
+              <div>
+                <div class="emp-payslip-month">February 2025</div>
+                <div class="emp-payslip-sub">Processed 01 Mar 2025</div>
+              </div>
+              <div style="text-align:right">
+                <div class="emp-payslip-amount">&#8377;1,25,000</div>
+                <span class="lp-status-badge approved">Paid</span>
+              </div>
+            </div>
+          </div>
+          <div class="hr-section">
+            <div class="hr-section-header">
+              <div class="hr-section-title">Leave Requests</div>
+              <a class="hr-section-link" href="javascript:void(0)" onclick="navigatePage('all-leaves',true)">Apply Leave</a>
+            </div>
+            <table class="hr-leave-table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Dates</th>
+                  <th>Days</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="cursor:pointer" onclick="navigatePage('all-leaves',true)">
+                  <td><span class="hr-emp-name">Casual Leave</span></td>
+                  <td style="color:var(--gray)">22–24 May</td>
+                  <td style="color:var(--gray)">3</td>
+                  <td><span class="lp-status-badge pending">Pending</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('all-leaves',true)">
+                  <td><span class="hr-emp-name">Sick Leave</span></td>
+                  <td style="color:var(--gray)">10 Apr</td>
+                  <td style="color:var(--gray)">1</td>
+                  <td><span class="lp-status-badge approved">Approved</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('all-leaves',true)">
+                  <td><span class="hr-emp-name">Earned Leave</span></td>
+                  <td style="color:var(--gray)">2–6 Mar</td>
+                  <td style="color:var(--gray)">5</td>
+                  <td><span class="lp-status-badge approved">Approved</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Documents & Compliance + Upcoming -->
+        <div class="hr-grid-2">
+          <div class="hr-section">
+            <div class="hr-section-header">
+              <div class="hr-section-title">Documents &amp; Compliance</div>
+              <a class="hr-section-link" href="javascript:void(0)" onclick="navigatePage('compliance',true)">View All</a>
+            </div>
+            <div class="emp-doc-row" style="cursor:pointer" onclick="navigatePage('compliance',true)">
+              <div class="emp-doc-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              <div style="flex:1">
+                <div class="emp-doc-name">Form 16 — FY 2024–25</div>
+                <div class="emp-doc-date">Issued 15 Apr 2025</div>
+              </div>
+              <button class="hr-action-btn neutral" onclick="event.stopPropagation()">Download</button>
+            </div>
+            <div class="emp-doc-row" style="cursor:pointer" onclick="navigatePage('compliance',true)">
+              <div class="emp-doc-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              <div style="flex:1">
+                <div class="emp-doc-name">Offer Letter</div>
+                <div class="emp-doc-date">Issued 10 Jan 2022</div>
+              </div>
+              <button class="hr-action-btn neutral" onclick="event.stopPropagation()">Download</button>
+            </div>
+            <div class="emp-doc-row" style="cursor:pointer" onclick="navigatePage('compliance',true)">
+              <div class="emp-doc-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+              <div style="flex:1">
+                <div class="emp-doc-name">IT Policy Acknowledgement</div>
+                <div class="emp-doc-date" style="color:var(--orange)">Action needed by 20 May</div>
+              </div>
+              <button class="hr-action-btn neutral" onclick="event.stopPropagation()">Sign</button>
+            </div>
+            <div class="emp-doc-row" style="cursor:pointer" onclick="navigatePage('compliance',true)">
+              <div class="emp-doc-icon"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+              <div style="flex:1">
+                <div class="emp-doc-name">Apr 2025 Payslip</div>
+                <div class="emp-doc-date">Generated 01 May 2025</div>
+              </div>
+              <button class="hr-action-btn neutral" onclick="event.stopPropagation()">Download</button>
+            </div>
+          </div>
+          <div class="hr-section">
+            <div class="hr-section-header">
+              <div class="hr-section-title">Upcoming</div>
+            </div>
+            <div class="emp-upcoming-row">
+              <div class="emp-upcoming-date">
+                <div class="emp-upcoming-day">20</div>
+                <div class="emp-upcoming-mon">May</div>
+              </div>
+              <div>
+                <div class="emp-upcoming-title">Policy Acknowledgement Deadline</div>
+                <div class="emp-upcoming-sub">IT Security Policy 2025</div>
+              </div>
+            </div>
+            <div class="emp-upcoming-row">
+              <div class="emp-upcoming-date">
+                <div class="emp-upcoming-day">22</div>
+                <div class="emp-upcoming-mon">May</div>
+              </div>
+              <div>
+                <div class="emp-upcoming-title">Leave Starts — Casual Leave</div>
+                <div class="emp-upcoming-sub">3 days · Pending approval</div>
+              </div>
+            </div>
+            <div class="emp-upcoming-row">
+              <div class="emp-upcoming-date">
+                <div class="emp-upcoming-day">25</div>
+                <div class="emp-upcoming-mon">May</div>
+              </div>
+              <div>
+                <div class="emp-upcoming-title">Expense Submission Deadline</div>
+                <div class="emp-upcoming-sub">May 2025 Expense Report</div>
+              </div>
+            </div>
+            <div class="emp-upcoming-row">
+              <div class="emp-upcoming-date">
+                <div class="emp-upcoming-day">31</div>
+                <div class="emp-upcoming-mon">May</div>
+              </div>
+              <div>
+                <div class="emp-upcoming-title">Security Training Deadline</div>
+                <div class="emp-upcoming-sub">Mandatory Annual Training</div>
+              </div>
+            </div>
+            <div class="emp-upcoming-row">
+              <div class="emp-upcoming-date" style="background:#fff7ed;border-color:#fed7aa">
+                <div class="emp-upcoming-day" style="color:var(--orange)">01</div>
+                <div class="emp-upcoming-mon">Jun</div>
+              </div>
+              <div>
+                <div class="emp-upcoming-title">Work Anniversary — 3 Years</div>
+                <div class="emp-upcoming-sub">Joined Dhi ADT on 01 Jun 2022</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Support Card -->
+        <div class="emp-support-card" style="margin-top:14px">
+          <div>
+            <div class="emp-support-title">Need Help?</div>
+            <div class="emp-support-desc">Raise a support ticket and we&rsquo;ll take it from there &mdash; payroll, leaves, documents and more.</div>
+          </div>
+          <div style="display:flex;gap:10px;flex-shrink:0">
+            <button class="emp-support-btn" onclick="raiseTicketFromHelp(true)">Raise Ticket</button>
+          </div>
+        </div>
+
+      </div>
+      
+      <!-- HR DASHBOARD VIEW -->
+      <div class="dashboard-view" id="hr-view">
+        <div class="hr-header">
+          <div class="hr-header-title">HR Dashboard</div>
+          <div class="hr-header-desc">Overview of your workforce and HR operations.</div>
+        </div>
+        
+        <!-- Statistics Row -->
+        <div class="hr-band"><span class="hr-band-title">Key Metrics</span><span class="hr-band-rule"></span></div>
+        <div class="hr-stat-grid">
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Total Employees</div>
+            <div class="hr-stat-number">148</div>
+            <div class="hr-stat-sub">Across 6 departments</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">On Leave today</div>
+            <div class="hr-stat-number">12</div>
+            <div class="hr-stat-sub green">8% attendance</div>
+          </div>
+          <div class="hr-stat-card is-static">
+            <div class="hr-stat-label">Birthdays today</div>
+            <div class="hr-stat-number">5</div>
+            <div class="hr-stat-sub">Send wishes</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Pending Requests</div>
+            <div class="hr-stat-number">8</div>
+            <div class="hr-stat-sub orange">Review now</div>
+          </div>
+          <!-- No Payroll Status card - see the note on #employee-view. -->
+          <div class="hr-stat-card is-static">
+            <div class="hr-stat-label">Payroll Blockers</div>
+            <div class="hr-stat-number">4</div>
+            <div class="hr-stat-sub orange">Resolve before payroll run</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Onboarding Pending</div>
+            <div class="hr-stat-number">7</div>
+            <div class="hr-stat-sub orange">Employees awaiting setup</div>
+          </div>
+          <div class="hr-stat-card is-static">
+            <div class="hr-stat-label">Document Verification Pending</div>
+            <div class="hr-stat-number">9</div>
+            <div class="hr-stat-sub orange">Documents awaiting review</div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="hr-band"><span class="hr-band-title">Quick Actions</span><span class="hr-band-rule"></span></div>
+        <div class="hr-actions">
+          <div class="hr-action-card">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle><line x1="12" y1="12" x2="12" y2="18"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">Add Employee</div>
+              <div class="hr-action-desc">Onboard a new team member</div>
+            </div>
+          </div>
+          <div class="hr-action-card" style="cursor:pointer" onclick="navigatePage('compliance',true)">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">Upload Policy</div>
+              <div class="hr-action-desc">Share company policies</div>
+            </div>
+          </div>
+          <div class="hr-action-card">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">Add Holiday</div>
+              <div class="hr-action-desc">Create company holidays</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Two Column Grid -->
+        <div class="hr-grid-2">
+          <!-- Leave Requests Section -->
+          <div class="hr-section">
+            <div class="hr-section-header">
+              <div class="hr-section-title">Leave Requests</div>
+              <a href="javascript:void(0)" class="hr-section-link" onclick="navigatePage('all-leaves',true)">View all</a>
+            </div>
+            <table class="hr-leave-table">
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Leave Type</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="cursor:pointer" onclick="navigatePage('all-leaves',true)">
+                  <td class="hr-emp-name">Ramesh Patel</td>
+                  <td>Sick Leave</td>
+                  <td>20 May</td>
+                  <td><span class="lp-status-badge pending">Pending</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('all-leaves',true)">
+                  <td class="hr-emp-name">Priya Sharma</td>
+                  <td>Casual Leave</td>
+                  <td>22 May</td>
+                  <td><span class="lp-status-badge approved">Approved</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('all-leaves',true)">
+                  <td class="hr-emp-name">Aishi Verma</td>
+                  <td>Earned Leave</td>
+                  <td>23-25 May</td>
+                  <td><span class="lp-status-badge approved">Approved</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('all-leaves',true)">
+                  <td class="hr-emp-name">Arjun Desai</td>
+                  <td>Sick Leave</td>
+                  <td>28 May</td>
+                  <td><span class="lp-status-badge pending">Pending</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- Holidays Section -->
+          <div class="hr-section">
+            <div class="hr-section-header">
+              <div class="hr-section-title">Holidays</div>
+              <a href="#" class="hr-section-link">View calendar</a>
+            </div>
+            <div class="hr-holiday-list">
+              <div class="hr-holiday-item">
+                <div style="display:flex;align-items:center;gap:12px;flex:1">
+                  <div class="hr-holiday-date">09</div>
+                  <div class="hr-holiday-info">
+                    <div class="hr-holiday-name">Ugadi</div>
+                    <div class="hr-holiday-type">Registered</div>
+                  </div>
+                </div>
+              </div>
+              <div class="hr-holiday-item">
+                <div style="display:flex;align-items:center;gap:12px;flex:1">
+                  <div class="hr-holiday-date">14</div>
+                  <div class="hr-holiday-info">
+                    <div class="hr-holiday-name">Telangana Formation Day</div>
+                    <div class="hr-holiday-type">Registered</div>
+                  </div>
+                </div>
+              </div>
+              <div class="hr-holiday-item">
+                <div style="display:flex;align-items:center;gap:12px;flex:1">
+                  <div class="hr-holiday-date">18</div>
+                  <div class="hr-holiday-info">
+                    <div class="hr-holiday-name">Good Friday</div>
+                    <div class="hr-holiday-type">Relaxed</div>
+                  </div>
+                </div>
+              </div>
+              <div class="hr-holiday-item">
+                <div style="display:flex;align-items:center;gap:12px;flex:1">
+                  <div class="hr-holiday-date">22</div>
+                  <div class="hr-holiday-info">
+                    <div class="hr-holiday-name">Eid-ul-Fitr</div>
+                    <div class="hr-holiday-type">Relaxed</div>
+                  </div>
+                </div>
+              </div>
+              <div class="hr-holiday-item">
+                <div style="display:flex;align-items:center;gap:12px;flex:1">
+                  <div class="hr-holiday-date">01</div>
+                  <div class="hr-holiday-info">
+                    <div class="hr-holiday-name">May Day</div>
+                    <div class="hr-holiday-type">National</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Birthdays & Anniversaries — full width -->
+        <div class="hr-section">
+          <div class="hr-section-header">
+            <div class="hr-section-title">Birthdays &amp; Anniversaries</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0">
+            <div class="hr-birthday-item" style="padding-right:20px">
+              <div class="hr-birthday-avatar">RP</div>
+              <div class="hr-birthday-info">
+                <div class="hr-birthday-name">Ramesh Patel</div>
+                <div class="hr-birthday-date">Birthday · 18 May</div>
+              </div>
+            </div>
+            <div class="hr-birthday-item" style="padding-left:20px;padding-right:20px;border-left:1px solid #f1f3f5;border-bottom:none">
+              <div class="hr-birthday-avatar">AK</div>
+              <div class="hr-birthday-info">
+                <div class="hr-birthday-name">Ashirwad Koul</div>
+                <div class="hr-birthday-date">Birthday · 16 May</div>
+              </div>
+            </div>
+            <div class="hr-birthday-item" style="padding-left:20px;padding-right:20px;border-left:1px solid #f1f3f5;border-bottom:none">
+              <div class="hr-birthday-avatar">CS</div>
+              <div class="hr-birthday-info">
+                <div class="hr-birthday-name">Chishan Sirangi</div>
+                <div class="hr-birthday-date">1 yr anniversary · 15 May</div>
+              </div>
+            </div>
+            <div class="hr-birthday-item" style="padding-left:20px;border-left:1px solid #f1f3f5;border-bottom:none">
+              <div class="hr-birthday-avatar">GS</div>
+              <div class="hr-birthday-info">
+                <div class="hr-birthday-name">Gojendra Singh</div>
+                <div class="hr-birthday-date">Birthday · 23 May</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORTING MANAGER DASHBOARD VIEW -->
+      <div class="dashboard-view" id="manager-view">
+        <div class="hr-header">
+          <div class="hr-header-title">Team Dashboard</div>
+          <div class="hr-header-desc">Track your direct reports, approvals, and team performance.</div>
+        </div>
+
+        <div class="hr-band"><span class="hr-band-title">Key Metrics</span><span class="hr-band-rule"></span></div>
+        <div class="hr-stat-grid">
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">My Team</div>
+            <div class="hr-stat-number">12</div>
+            <div class="hr-stat-sub">Direct reports</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Present Today</div>
+            <div class="hr-stat-number">9</div>
+            <div class="hr-stat-sub green">75% of team</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Pending Approvals</div>
+            <div class="hr-stat-number">6</div>
+            <div class="hr-stat-sub orange">Items waiting for action</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">On Leave Today</div>
+            <div class="hr-stat-number">2</div>
+            <div class="hr-stat-sub">Utkarsh, Ashneet</div>
+          </div>
+        </div>
+
+        <div class="hr-band"><span class="hr-band-title">Quick Actions</span><span class="hr-band-rule"></span></div>
+        <div class="hr-actions" style="grid-template-columns:repeat(2,1fr)">
+          <div class="hr-action-card" style="cursor:pointer" onclick="navigatePage('all-leaves',true)">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">Approve Leaves</div>
+              <div class="hr-action-desc">Review pending leave requests</div>
+            </div>
+          </div>
+          <div class="hr-action-card">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">Approve Expenses</div>
+              <div class="hr-action-desc">Manage expense claim approvals</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hr-grid-2">
+          <div class="hr-section">
+            <div class="hr-section-header">
+              <div class="hr-section-title">Team Leave Requests</div>
+              <a href="javascript:void(0)" class="hr-section-link" onclick="navigatePage('all-leaves',true)">View all</a>
+            </div>
+            <table class="hr-leave-table manager-leave-table">
+              <thead>
+                <tr>
+                  <th class="col-employee">Employee</th>
+                  <th class="col-type">Leave Type</th>
+                  <th class="col-duration">Duration</th>
+                  <th class="col-days">Days</th>
+                  <th class="col-action">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="cursor:pointer" onclick="alOpenFromDashboard(7)">
+                  <td class="hr-emp-name">Utkarsh Shukla</td>
+                  <td>Casual Leave</td>
+                  <td>15 - 16 May</td>
+                  <td class="manager-days">2</td>
+                  <td onclick="event.stopPropagation()"><div class="manager-action-cell"><button class="hr-action-btn reject" onclick="alDecideFromDashboard(7,'Unapproved')">Reject</button><button class="hr-action-btn approve" onclick="alDecideFromDashboard(7,'Approved')">Approve</button></div></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="alOpenFromDashboard(8)">
+                  <td class="hr-emp-name">Ashneet Kaur</td>
+                  <td>Sick Leave</td>
+                  <td>18 May</td>
+                  <td class="manager-days">1</td>
+                  <td onclick="event.stopPropagation()"><div class="manager-action-cell"><button class="hr-action-btn reject" onclick="alDecideFromDashboard(8,'Unapproved')">Reject</button><button class="hr-action-btn approve" onclick="alDecideFromDashboard(8,'Approved')">Approve</button></div></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="alOpenFromDashboard(9)">
+                  <td class="hr-emp-name">Sneha Kulkarni</td>
+                  <td>Earned Leave</td>
+                  <td>22 - 23 May</td>
+                  <td class="manager-days">2</td>
+                  <td onclick="event.stopPropagation()"><div class="manager-action-cell"><button class="hr-action-btn reject" onclick="alDecideFromDashboard(9,'Unapproved')">Reject</button><button class="hr-action-btn approve" onclick="alDecideFromDashboard(9,'Approved')">Approve</button></div></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="alOpenFromDashboard(10)">
+                  <td class="hr-emp-name">Diksha Kumari</td>
+                  <td>Casual Leave</td>
+                  <td>26 May</td>
+                  <td class="manager-days">1</td>
+                  <td onclick="event.stopPropagation()"><div class="manager-action-cell"><button class="hr-action-btn reject" onclick="alDecideFromDashboard(10,'Unapproved')">Reject</button><button class="hr-action-btn approve" onclick="alDecideFromDashboard(10,'Approved')">Approve</button></div></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="alOpenFromDashboard(11)">
+                  <td class="hr-emp-name">Pardeep Verga</td>
+                  <td>Sick Leave</td>
+                  <td>28 - 29 May</td>
+                  <td class="manager-days">2</td>
+                  <td onclick="event.stopPropagation()"><div class="manager-action-cell"><button class="hr-action-btn reject" onclick="alDecideFromDashboard(11,'Unapproved')">Reject</button><button class="hr-action-btn approve" onclick="alDecideFromDashboard(11,'Approved')">Approve</button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="hr-section">
+            <div class="hr-section-header">
+              <div class="hr-section-title">Holidays</div>
+            </div>
+            <div class="hr-holiday-list">
+              <div class="hr-holiday-item">
+                <div style="display:flex;align-items:center;gap:12px;flex:1">
+                  <div class="hr-holiday-date">09</div>
+                  <div class="hr-holiday-info">
+                    <div class="hr-holiday-name">Ugadi</div>
+                    <div class="hr-holiday-type">Tuesday</div>
+                  </div>
+                </div>
+                <span class="holiday-tag regional">Regional</span>
+              </div>
+              <div class="hr-holiday-item">
+                <div style="display:flex;align-items:center;gap:12px;flex:1">
+                  <div class="hr-holiday-date">14</div>
+                  <div class="hr-holiday-info">
+                    <div class="hr-holiday-name">Tamil New Year</div>
+                    <div class="hr-holiday-type">Sunday</div>
+                  </div>
+                </div>
+                <span class="holiday-tag regional">Regional</span>
+              </div>
+              <div class="hr-holiday-item">
+                <div style="display:flex;align-items:center;gap:12px;flex:1">
+                  <div class="hr-holiday-date">18</div>
+                  <div class="hr-holiday-info">
+                    <div class="hr-holiday-name">Good Friday</div>
+                    <div class="hr-holiday-type">Thursday</div>
+                  </div>
+                </div>
+                <span class="holiday-tag national">National</span>
+              </div>
+              <div class="hr-holiday-item">
+                <div style="display:flex;align-items:center;gap:12px;flex:1">
+                  <div class="hr-holiday-date">22</div>
+                  <div class="hr-holiday-info">
+                    <div class="hr-holiday-name">Id-ul-Fitr</div>
+                    <div class="hr-holiday-type">Monday</div>
+                  </div>
+                </div>
+                <span class="holiday-tag national">National</span>
+              </div>
+              <div class="hr-holiday-item">
+                <div style="display:flex;align-items:center;gap:12px;flex:1">
+                  <div class="hr-holiday-date">01</div>
+                  <div class="hr-holiday-info">
+                    <div class="hr-holiday-name">May Day</div>
+                    <div class="hr-holiday-type">Thursday</div>
+                  </div>
+                </div>
+                <span class="holiday-tag national">National</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hr-grid-2">
+          <div class="hr-section">
+            <div class="hr-section-header">
+              <div class="hr-section-title">Pending Expense Claims</div>
+            </div>
+            <div class="manager-expense-list">
+              <a href="#" class="manager-expense-item">
+                <div class="manager-expense-avatar">DK</div>
+                <div class="manager-expense-body">
+                  <div class="manager-expense-name">Diksha Kumari</div>
+                  <div class="manager-expense-desc">Client visit to Mumbai on 06 May. Includes flight, cab, and hotel expenses.</div>
+                  <span class="manager-expense-tag">Travel</span>
+                </div>
+                <div class="manager-expense-right">
+                  <div class="manager-expense-amount">₹2,400</div>
+                  <span class="lp-status-badge pending">Pending</span>
+                </div>
+              </a>
+              <a href="#" class="manager-expense-item">
+                <div class="manager-expense-avatar">PV</div>
+                <div class="manager-expense-body">
+                  <div class="manager-expense-name">Pardeep Verga</div>
+                  <div class="manager-expense-desc">Keyboard, mouse, and monitor stand purchased for home office setup.</div>
+                  <span class="manager-expense-tag">Office Supplies</span>
+                </div>
+                <div class="manager-expense-right">
+                  <div class="manager-expense-amount">₹850</div>
+                  <span class="lp-status-badge pending">Pending</span>
+                </div>
+              </a>
+              <a href="#" class="manager-expense-item">
+                <div class="manager-expense-avatar">DJ</div>
+                <div class="manager-expense-body">
+                  <div class="manager-expense-name">Deepak Joshi</div>
+                  <div class="manager-expense-desc">Annual renewal of JetBrains IDE license for development work.</div>
+                  <span class="manager-expense-tag">Software</span>
+                </div>
+                <div class="manager-expense-right">
+                  <div class="manager-expense-amount">₹5,200</div>
+                  <span class="lp-status-badge pending">Pending</span>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="hr-section">
+            <div class="hr-section-header">
+              <div class="hr-section-title">Birthdays &amp; Work Anniversaries</div>
+            </div>
+            <div class="hr-birthday-list">
+              <div class="hr-birthday-item">
+                <div class="hr-birthday-avatar">RP</div>
+                <div class="hr-birthday-info">
+                  <div class="hr-birthday-name">Ramesh Patil</div>
+                  <div class="hr-birthday-date">Birthday · 14 May</div>
+                </div>
+              </div>
+              <div class="hr-birthday-item">
+                <div class="hr-birthday-avatar">AK</div>
+                <div class="hr-birthday-info">
+                  <div class="hr-birthday-name">Ashneet Kaur</div>
+                  <div class="hr-birthday-date">2 yr work anniversary · 16 May</div>
+                </div>
+              </div>
+              <div class="hr-birthday-item">
+                <div class="hr-birthday-avatar">DK</div>
+                <div class="hr-birthday-info">
+                  <div class="hr-birthday-name">Diksha Kumari</div>
+                  <div class="hr-birthday-date">Birthday · 19 May</div>
+                </div>
+              </div>
+              <div class="hr-birthday-item">
+                <div class="hr-birthday-avatar">GS</div>
+                <div class="hr-birthday-info">
+                  <div class="hr-birthday-name">Gagandeep Singh</div>
+                  <div class="hr-birthday-date">3 yr work anniversary · 28 May</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPENDHI SUPER ADMIN DASHBOARD VIEW -->
+      <div class="dashboard-view" id="super-admin-view">
+        <div class="hr-header">
+          <div class="hr-header-title">Opendhi Super Admin Dashboard</div>
+          <div class="hr-header-desc">Full Opendhi access across the selected entity — entity setup, contracts, invoices, compliance, tickets, and access control.</div>
+        </div>
+
+        <!-- Stat cards — one grid, 11 tiles, flowing 4 / 4 / 3 down the
+             standard track. (Was three separate grids with hand-set margins.) -->
+        <div class="hr-band"><span class="hr-band-title">Key Metrics</span><span class="hr-band-rule"></span></div>
+        <div class="hr-stat-grid">
+          <div class="hr-stat-card is-static">
+            <div class="hr-stat-label">Selected Entity</div>
+            <div class="hr-stat-number is-text">Dhi Hyperlocal</div>
+            <div class="hr-stat-sub">Active entity workspace</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Total Workforce</div>
+            <div class="hr-stat-number">148</div>
+            <div class="hr-stat-sub">Direct + Global Employees</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Tickets</div>
+            <div class="hr-stat-number">14</div>
+            <div class="hr-stat-sub orange">5 high priority</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Compliance Items</div>
+            <div class="hr-stat-number">9</div>
+            <div class="hr-stat-sub orange">3 pending review</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Contracts</div>
+            <div class="hr-stat-number">25</div>
+            <div class="hr-stat-sub green">Active across entities</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Pending Invoices</div>
+            <div class="hr-stat-number">7</div>
+            <div class="hr-stat-sub orange">Awaiting client payment</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Paid Invoices</div>
+            <div class="hr-stat-number">43</div>
+            <div class="hr-stat-sub green">Cleared this cycle</div>
+          </div>
+          <div class="hr-stat-card is-static">
+            <div class="hr-stat-label">Pending Entities</div>
+            <div class="hr-stat-number">3</div>
+            <div class="hr-stat-sub orange">Awaiting setup</div>
+          </div>
+          <!-- Last row runs three wide and is left short, so these stay
+               aligned with the rows above.
+               No Payroll Status card - see the note on #employee-view. -->
+          <div class="hr-stat-card is-static">
+            <div class="hr-stat-label">Payroll Blockers</div>
+            <div class="hr-stat-number">4</div>
+            <div class="hr-stat-sub orange">Resolve before payroll run</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Escalated Tickets</div>
+            <div class="hr-stat-number">3</div>
+            <div class="hr-stat-sub orange">Needs priority attention</div>
+          </div>
+          <div class="hr-stat-card is-static">
+            <div class="hr-stat-label">Expiring Documents</div>
+            <div class="hr-stat-number">5</div>
+            <div class="hr-stat-sub orange">Expiring in next 30 days</div>
+          </div>
+        </div>
+
+        <!-- Quick action cards — 4 in one row -->
+        <div class="hr-band"><span class="hr-band-title">Quick Actions</span><span class="hr-band-rule"></span></div>
+        <div class="hr-actions" style="grid-template-columns:repeat(4,1fr)">
+          <a href="#" class="hr-action-card" style="text-decoration:none;color:inherit">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">Manage Entity</div>
+              <div class="hr-action-desc">Update entity profile, locations, and business settings</div>
+            </div>
+          </a>
+          <a href="#" class="hr-action-card" style="text-decoration:none;color:inherit">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">Support Center</div>
+              <div class="hr-action-desc">View and resolve support tickets</div>
+            </div>
+          </a>
+          <a href="javascript:void(0)" class="hr-action-card" style="text-decoration:none;color:inherit" onclick="navigatePage('compliance',true)">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">Compliance Hub</div>
+              <div class="hr-action-desc">Track statutory, document, and policy compliance</div>
+            </div>
+          </a>
+          <a href="javascript:void(0)" class="hr-action-card" style="text-decoration:none;color:inherit" onclick="navigatePage('all-users',true)">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">Users &amp; Roles</div>
+              <div class="hr-action-desc">Manage permissions for all admin and team roles</div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Entity Setup Progress -->
+        <div class="hr-section" style="margin-bottom:22px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+            <div>
+              <div style="font-size:15px;font-weight:700;color:#0f172a;margin-bottom:3px">Entity Setup Progress</div>
+              <div style="font-size:12px;color:#6a7282">Complete these steps to <a href="#" style="color:#de7909;text-decoration:none;font-weight:500">activate full platform capabilities</a></div>
+            </div>
+            <div style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;padding:5px 16px;font-size:12px;font-weight:600;color:#0f172a;white-space:nowrap;align-self:center">5 of 5 Complete</div>
+          </div>
+          <div style="margin-bottom:16px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <span style="font-size:11px;color:#6a7282;font-weight:500">Overall Progress</span>
+              <span style="font-size:11px;color:#0f172a;font-weight:600">100%</span>
+            </div>
+            <div style="background:#e5e7eb;border-radius:99px;height:6px;overflow:hidden">
+              <div style="background:#334155;width:100%;height:100%;border-radius:99px;transition:width .4s ease"></div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px">
+              <div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#0f172a;line-height:1.3">Business Details</div>
+                <div style="font-size:11px;color:#16a34a;font-weight:500;margin-top:3px">Completed</div>
+              </div>
+            </div>
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px">
+              <div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#0f172a;line-height:1.3">Company Structure</div>
+                <div style="font-size:11px;color:#16a34a;font-weight:500;margin-top:3px">Completed</div>
+              </div>
+            </div>
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px">
+              <div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#0f172a;line-height:1.3">Bank Details</div>
+                <div style="font-size:11px;color:#16a34a;font-weight:500;margin-top:3px">Completed</div>
+              </div>
+            </div>
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px">
+              <div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#0f172a;line-height:1.3">Add First Employee</div>
+                <div style="font-size:11px;color:#16a34a;font-weight:500;margin-top:3px">Completed</div>
+              </div>
+            </div>
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px">
+              <div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#0f172a;line-height:1.3">Setup Teams</div>
+                <div style="font-size:11px;color:#16a34a;font-weight:500;margin-top:3px">Completed</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FINANCE ADMIN DASHBOARD VIEW -->
+      <!-- OPENDHI FINANCE ADMIN DASHBOARD VIEW -->
+      <div class="dashboard-view" id="finance-admin-view">
+        <div class="hr-header">
+          <div class="hr-header-title">Opendhi Finance Admin Dashboard</div>
+          <div class="hr-header-desc">Track invoices, payments, contract billing, payment compliance, and financial activity across all entities.</div>
+        </div>
+
+        <!-- Stat cards — 9 tiles on the standard track: 4 / 4 / 1 -->
+        <div class="hr-band"><span class="hr-band-title">Key Metrics</span><span class="hr-band-rule"></span></div>
+        <div class="hr-stat-grid">
+          <div class="hr-stat-card is-static">
+            <div class="hr-stat-label">Total Invoiced</div>
+            <div class="hr-stat-number">₹14.3L</div>
+            <div class="hr-stat-sub green">This month</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Pending Invoices</div>
+            <div class="hr-stat-number">7</div>
+            <div class="hr-stat-sub orange">Awaiting client payment</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Paid Invoices</div>
+            <div class="hr-stat-number">43</div>
+            <div class="hr-stat-sub green">Cleared this cycle</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Overdue Invoices</div>
+            <div class="hr-stat-number">2</div>
+            <div class="hr-stat-sub orange">Past due date</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Active Contracts</div>
+            <div class="hr-stat-number">25</div>
+            <div class="hr-stat-sub green">Billable this cycle</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Total Workforce</div>
+            <div class="hr-stat-number">148</div>
+            <div class="hr-stat-sub">Billable headcount</div>
+          </div>
+          <div class="hr-stat-card is-static">
+            <div class="hr-stat-label">Upcoming Payments</div>
+            <div class="hr-stat-number">₹18.4L</div>
+            <div class="hr-stat-sub orange">Due in next 7 days</div>
+          </div>
+          <div class="hr-stat-card is-static">
+            <div class="hr-stat-label">Payment Compliance</div>
+            <div class="hr-stat-number">5</div>
+            <div class="hr-stat-sub orange">Issues flagged</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Pending Approvals</div>
+            <div class="hr-stat-number">6</div>
+            <div class="hr-stat-sub orange">Items waiting for action</div>
+          </div>
+        </div>
+
+        <!-- Action cards — 4 in one row -->
+        <div class="hr-band"><span class="hr-band-title">Quick Actions</span><span class="hr-band-rule"></span></div>
+        <div class="hr-actions" style="grid-template-columns:repeat(4,1fr)">
+          <a href="javascript:void(0)" class="hr-action-card" style="text-decoration:none;color:inherit" onclick="navigatePage('payments',true)">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2V2z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">View Invoices</div>
+              <div class="hr-action-desc">All generated invoices and current status</div>
+            </div>
+          </a>
+          <a href="javascript:void(0)" class="hr-action-card" style="text-decoration:none;color:inherit" onclick="navigatePage('payments',true)">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">Raise Invoice</div>
+              <div class="hr-action-desc">Generate a new invoice for a contract or entity</div>
+            </div>
+          </a>
+          <a href="javascript:void(0)" class="hr-action-card" style="text-decoration:none;color:inherit" onclick="navigatePage('payments',true)">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">Payment Reports</div>
+              <div class="hr-action-desc">Trends, summaries, and payment cycle analytics</div>
+            </div>
+          </a>
+          <a href="javascript:void(0)" class="hr-action-card" style="text-decoration:none;color:inherit" onclick="navigatePage('payments',true)">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">Contract Billing</div>
+              <div class="hr-action-desc">View contract rates, invoice cycles, and billing status</div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Invoice overview + Paid invoices -->
+        <div class="hr-grid-2">
+          <div class="hr-section">
+            <div class="hr-section-header">
+              <div class="hr-section-title">Invoice Overview</div>
+            </div>
+            <table class="hr-leave-table">
+              <thead>
+                <tr>
+                  <th>Invoice ID</th>
+                  <th>Entity</th>
+                  <th>Amount</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="cursor:pointer" onclick="navigatePage('payments',true)">
+                  <td class="hr-emp-name">INV-2040</td>
+                  <td>ADT Spain S.L.</td>
+                  <td>₹2,10,000</td>
+                  <td>22 May</td>
+                  <td><span class="lp-status-badge pending">Pending</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('payments',true)">
+                  <td class="hr-emp-name">INV-2039</td>
+                  <td>ADT Singapore Pte.</td>
+                  <td>₹6,10,000</td>
+                  <td>25 May</td>
+                  <td><span class="lp-status-badge pending">Pending</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('payments',true)">
+                  <td class="hr-emp-name">INV-2038</td>
+                  <td>Dhi Hyperlocal</td>
+                  <td>₹2,75,000</td>
+                  <td>12 May</td>
+                  <td><span class="lp-status-badge approved">Paid</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="hr-section">
+            <div class="hr-section-header">
+              <div class="hr-section-title">Paid Invoices</div>
+            </div>
+            <table class="hr-leave-table">
+              <thead>
+                <tr>
+                  <th>Invoice ID</th>
+                  <th>Entity</th>
+                  <th>Amount</th>
+                  <th>Paid On</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="cursor:pointer" onclick="navigatePage('payments',true)">
+                  <td class="hr-emp-name">INV-2038</td>
+                  <td>Dhi Hyperlocal</td>
+                  <td>₹2,75,000</td>
+                  <td>12 May</td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('payments',true)">
+                  <td class="hr-emp-name">INV-2031</td>
+                  <td>Dhi Hyperlocal</td>
+                  <td>₹1,85,000</td>
+                  <td>08 May</td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('payments',true)">
+                  <td class="hr-emp-name">INV-2027</td>
+                  <td>ADT Singapore Pte.</td>
+                  <td>₹3,40,000</td>
+                  <td>02 May</td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('payments',true)">
+                  <td class="hr-emp-name">INV-2021</td>
+                  <td>ADT Spain S.L.</td>
+                  <td>₹5,25,000</td>
+                  <td>25 Apr</td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('payments',true)">
+                  <td class="hr-emp-name">INV-2018</td>
+                  <td>ADT Brazil Ltda.</td>
+                  <td>₹1,60,000</td>
+                  <td>20 Apr</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- FINANCE ADMIN DASHBOARD VIEW (Basic) -->
+      <div class="dashboard-view" id="finance-admin-basic-view">
+        <div class="hr-header">
+          <div class="hr-header-title">Finance Admin Dashboard</div>
+          <div class="hr-header-desc">View invoices and payment visibility with finance-only access.</div>
+        </div>
+
+        <!-- Stat cards — 5 tiles on the standard track: 4 / 1.
+             (Was a 3-col row then a 2-col row, so the same card was 389px wide
+             above and 591px wide below.) -->
+        <div class="hr-band"><span class="hr-band-title">Key Metrics</span><span class="hr-band-rule"></span></div>
+        <div class="hr-stat-grid">
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Pending Invoices</div>
+            <div class="hr-stat-number">7</div>
+            <div class="hr-stat-sub orange">Awaiting client payment</div>
+          </div>
+          <div class="hr-stat-card is-static">
+            <div class="hr-stat-label">Upcoming Payments</div>
+            <div class="hr-stat-number">₹18.4L</div>
+            <div class="hr-stat-sub">Due in next 7 days</div>
+          </div>
+          <div class="hr-stat-card is-static">
+            <div class="hr-stat-label">Total Invoiced</div>
+            <div class="hr-stat-number">₹14.3L</div>
+            <div class="hr-stat-sub">This month</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Paid This Month</div>
+            <div class="hr-stat-number">₹8.25L</div>
+            <div class="hr-stat-sub">4 invoices cleared</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Pending Approvals</div>
+            <div class="hr-stat-number">6</div>
+            <div class="hr-stat-sub orange">Items waiting for action</div>
+          </div>
+        </div>
+
+        <div class="hr-band"><span class="hr-band-title">Quick Actions</span><span class="hr-band-rule"></span></div>
+        <div class="hr-actions finance-action-grid">
+          <a href="javascript:void(0)" class="hr-action-card" style="text-decoration:none;color:inherit" onclick="navigatePage('payments',true)">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2V2z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">View Invoices</div>
+              <div class="hr-action-desc">All generated invoices and status</div>
+            </div>
+          </a>
+          <a href="javascript:void(0)" class="hr-action-card" style="text-decoration:none;color:inherit" onclick="navigatePage('payments',true)">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">Paid Invoices</div>
+              <div class="hr-action-desc">View cleared and settled invoices</div>
+            </div>
+          </a>
+          <a href="javascript:void(0)" class="hr-action-card" style="text-decoration:none;color:inherit" onclick="navigatePage('payments',true)">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">Invoice Reports</div>
+              <div class="hr-action-desc">Payment trends and summaries</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="finance-tables-grid">
+          <div class="hr-section">
+            <div class="hr-section-header">
+              <div class="hr-section-title">Invoice Overview</div>
+            </div>
+            <table class="hr-leave-table">
+              <thead>
+                <tr>
+                  <th>Invoice ID</th>
+                  <th>Entity</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="cursor:pointer" onclick="navigatePage('payments',true)">
+                  <td class="hr-emp-name">INV-2041</td>
+                  <td>Dhi Hyperlocal</td>
+                  <td>₹4,20,000</td>
+                  <td><span class="lp-status-badge pending">Unpaid</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('payments',true)">
+                  <td class="hr-emp-name">INV-2038</td>
+                  <td>Dhi Hyperlocal</td>
+                  <td>₹2,75,000</td>
+                  <td><span class="lp-status-badge approved">Paid</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('payments',true)">
+                  <td class="hr-emp-name">INV-2035</td>
+                  <td>Dhi Hyperlocal</td>
+                  <td>₹6,10,000</td>
+                  <td><span class="lp-status-badge pending">Unpaid</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('payments',true)">
+                  <td class="hr-emp-name">INV-2031</td>
+                  <td>Dhi Hyperlocal</td>
+                  <td>₹1,85,000</td>
+                  <td><span class="lp-status-badge approved">Paid</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="hr-section">
+            <div class="hr-section-header">
+              <div class="hr-section-title">Paid Invoices</div>
+            </div>
+            <table class="hr-leave-table">
+              <thead>
+                <tr>
+                  <th>Invoice ID</th>
+                  <th>Entity</th>
+                  <th>Paid Amount</th>
+                  <th>Paid On</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="cursor:pointer" onclick="navigatePage('payments',true)">
+                  <td class="hr-emp-name">INV-2038</td>
+                  <td>Dhi Hyperlocal</td>
+                  <td>₹2,75,000</td>
+                  <td>12 May</td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('payments',true)">
+                  <td class="hr-emp-name">INV-2031</td>
+                  <td>Dhi Hyperlocal</td>
+                  <td>₹1,85,000</td>
+                  <td>08 May</td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('payments',true)">
+                  <td class="hr-emp-name">INV-2027</td>
+                  <td>Dhi Hyperlocal</td>
+                  <td>₹3,40,000</td>
+                  <td>02 May</td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('payments',true)">
+                  <td class="hr-emp-name">INV-2021</td>
+                  <td>Dhi Hyperlocal</td>
+                  <td>₹5,25,000</td>
+                  <td>25 Apr</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CSM DASHBOARD VIEW -->
+      <div class="dashboard-view" id="csm-view">
+        <div class="hr-header">
+          <div class="hr-header-title">CSM Support Dashboard</div>
+          <div class="hr-header-desc">Manage assigned client support, tickets, chats, and limited view-only client context.</div>
+        </div>
+
+        <div class="hr-band"><span class="hr-band-title">Key Metrics</span><span class="hr-band-rule"></span></div>
+        <!-- Counted from ticketsData and clickable through to that filter, so
+             the grid is filled by renderCsmDashCards() rather than written out
+             here. switchDashboard() calls it when this tab is shown. -->
+        <div class="csm-status-grid" id="csm-status-grid"></div>
+
+        <div class="csm-main-grid">
+          <div class="csm-panel">
+            <div class="csm-panel-header">
+              <div class="csm-panel-title">Tickets</div>
+              <a href="javascript:void(0)" class="csm-panel-link" onclick="navigatePage('support-tickets',true)">View All <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 18 15 12 9 6"/></svg></a>
+            </div>
+            <div class="csm-ticket-row" style="cursor:pointer" onclick="navigatePage('support-tickets',true)">
+              <div>
+                <div class="csm-ticket-meta">#TCK-1021 John Doe 🇳🇱</div>
+                <div class="csm-ticket-title">Payroll Blocked</div>
+                <div class="csm-ticket-desc">Work Permit Missing</div>
+                <div class="csm-ticket-time">5 min ago</div>
+              </div>
+              <span class="lp-status-badge blocked">Blocked</span>
+            </div>
+            <div class="csm-ticket-row" style="cursor:pointer" onclick="navigatePage('support-tickets',true)">
+              <div>
+                <div class="csm-ticket-meta">#TCK-1025 Thijs Verbeek 🇧🇪</div>
+                <div class="csm-ticket-title">Document Pending</div>
+                <div class="csm-ticket-desc">Awaiting Passport Verification</div>
+                <div class="csm-ticket-time">1 hour ago</div>
+              </div>
+              <span class="lp-status-badge pending">Pending</span>
+            </div>
+            <div class="csm-ticket-row" style="cursor:pointer" onclick="navigatePage('support-tickets',true)">
+              <div>
+                <div class="csm-ticket-meta">#TCK-1019 Alice Smith 🇮🇹</div>
+                <div class="csm-ticket-title">Contract Pending</div>
+                <div class="csm-ticket-desc">Awaiting Signature</div>
+                <div class="csm-ticket-time">15 hours ago</div>
+              </div>
+              <span class="lp-status-badge pending">Pending</span>
+            </div>
+            <div class="csm-ticket-row" style="cursor:pointer" onclick="navigatePage('support-tickets',true)">
+              <div>
+                <div class="csm-ticket-meta">#TCK-1010 Mark Lee 🇩🇪</div>
+                <div class="csm-ticket-title">Tax Registration</div>
+                <div class="csm-ticket-desc">Waiting on Tax ID</div>
+                <div class="csm-ticket-time">1 day ago</div>
+              </div>
+              <span class="lp-status-badge active">Active</span>
+            </div>
+          </div>
+
+          <div class="csm-panel">
+            <div class="csm-panel-header">
+              <div class="csm-panel-title">Chats</div>
+            </div>
+            <div class="csm-chat-row" style="cursor:pointer" onclick="navigatePage('chats',true)">
+              <div class="csm-chat-avatar-wrap">
+                <div class="csm-chat-avatar">JD</div>
+                <span class="csm-chat-dot online"></span>
+              </div>
+              <div class="csm-chat-info">
+                <div class="csm-chat-name">John Doe 🇳🇱</div>
+                <div class="csm-chat-time">53 min ago</div>
+              </div>
+              <svg class="csm-chat-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="csm-chat-row" style="cursor:pointer" onclick="navigatePage('chats',true)">
+              <div class="csm-chat-avatar-wrap">
+                <div class="csm-chat-avatar">TV</div>
+                <span class="csm-chat-dot online"></span>
+              </div>
+              <div class="csm-chat-info">
+                <div class="csm-chat-name">Thijs Verbeek 🇧🇪</div>
+                <div class="csm-chat-time">2 days ago</div>
+              </div>
+              <svg class="csm-chat-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="csm-chat-row" style="cursor:pointer" onclick="navigatePage('chats',true)">
+              <div class="csm-chat-avatar-wrap">
+                <div class="csm-chat-avatar">AS</div>
+                <span class="csm-chat-dot"></span>
+              </div>
+              <div class="csm-chat-info">
+                <div class="csm-chat-name">Alice Smith 🇮🇹</div>
+                <div class="csm-chat-time">1 week ago</div>
+              </div>
+              <svg class="csm-chat-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="csm-chat-row" style="cursor:pointer" onclick="navigatePage('chats',true)">
+              <div class="csm-chat-avatar-wrap">
+                <div class="csm-chat-avatar">ML</div>
+                <span class="csm-chat-dot online"></span>
+              </div>
+              <div class="csm-chat-info">
+                <div class="csm-chat-name">Mark Lee 🇩🇪</div>
+                <div class="csm-chat-time">2 months ago</div>
+              </div>
+              <svg class="csm-chat-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="csm-chat-row" style="cursor:pointer" onclick="navigatePage('chats',true)">
+              <div class="csm-chat-avatar-wrap">
+                <div class="csm-chat-avatar">JD</div>
+                <span class="csm-chat-dot online"></span>
+              </div>
+              <div class="csm-chat-info">
+                <div class="csm-chat-name">John Doe 🇳🇱</div>
+                <div class="csm-chat-time">2 months ago</div>
+              </div>
+              <svg class="csm-chat-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- OPENDHI COMPLIANCE ADMIN DASHBOARD VIEW -->
+      <div class="dashboard-view" id="opendhi-compliance-view">
+        <div id="oca-dash"></div>
+      </div>
+
+      <!-- OPENDHI OPS ADMIN DASHBOARD VIEW -->
+      <div class="dashboard-view" id="opendhi-ops-view">
+        <div class="hr-header">
+          <div class="hr-header-title">Opendhi Ops Admin Dashboard</div>
+          <div class="hr-header-desc">Track contract pipeline, active contracts, compliance items, and pending entities across the selected entity.</div>
+        </div>
+
+        <!-- Stat cards — 8 tiles on the standard track: 4 / 4.
+             (Was a 5-col row of 228px cards then a 4-col row of 289px ones.) -->
+        <div class="hr-band"><span class="hr-band-title">Key Metrics</span><span class="hr-band-rule"></span></div>
+        <div class="hr-stat-grid">
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Active Contracts</div>
+            <div class="hr-stat-number">25</div>
+            <div class="hr-stat-sub green">Across all entities</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Active People</div>
+            <div class="hr-stat-number">148</div>
+            <div class="hr-stat-sub green">Direct + EOR/PEO</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Compliance Items</div>
+            <div class="hr-stat-number">14</div>
+            <div class="hr-stat-sub orange">3 due soon</div>
+          </div>
+          <div class="hr-stat-card is-static">
+            <div class="hr-stat-label">Pending Entities</div>
+            <div class="hr-stat-number">3</div>
+            <div class="hr-stat-sub orange">Awaiting setup</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Ready for Payroll</div>
+            <div class="hr-stat-number">25</div>
+            <div class="hr-stat-sub green">Cleared this cycle</div>
+          </div>
+          <!-- No Payroll Status card - see the note on #employee-view. -->
+          <div class="hr-stat-card is-static">
+            <div class="hr-stat-label">Payroll Blockers</div>
+            <div class="hr-stat-number">4</div>
+            <div class="hr-stat-sub orange">Resolve before payroll run</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Onboarding Pending</div>
+            <div class="hr-stat-number">7</div>
+            <div class="hr-stat-sub orange">Employees awaiting setup</div>
+          </div>
+          <div class="hr-stat-card is-static">
+            <div class="hr-stat-label">Setup Progress</div>
+            <div class="hr-stat-number">82%</div>
+            <div class="hr-stat-sub green">Entity setup completion</div>
+          </div>
+        </div>
+
+        <!-- Contract Pipeline -->
+        <div class="hr-section" style="margin-bottom:20px">
+          <div class="hr-section-header">
+            <div class="hr-section-title">Contract Pipeline</div>
+            <a href="javascript:void(0)" class="hr-section-link" onclick="navigatePage('contracts',true)">View all contracts</a>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px">
+            <div class="ops-pipe-card" onclick="navigatePage('contracts',true)">
+              <div style="font-size:10px;font-weight:600;color:#6a7282;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Proposal Sent</div>
+              <div style="font-size:26px;font-weight:700;color:#0f172a;letter-spacing:-.5px;line-height:1">8</div>
+              <div style="font-size:10px;color:#de7909;font-weight:500;margin-top:6px">Pending client action</div>
+            </div>
+            <div class="ops-pipe-card" onclick="navigatePage('contracts',true)">
+              <div style="font-size:10px;font-weight:600;color:#6a7282;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Proposal Approved</div>
+              <div style="font-size:26px;font-weight:700;color:#0f172a;letter-spacing:-.5px;line-height:1">5</div>
+              <div style="font-size:10px;color:#22c55e;font-weight:500;margin-top:6px">Client approved</div>
+            </div>
+            <div class="ops-pipe-card" onclick="navigatePage('contracts',true)">
+              <div style="font-size:10px;font-weight:600;color:#6a7282;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Contract Sent</div>
+              <div style="font-size:26px;font-weight:700;color:#0f172a;letter-spacing:-.5px;line-height:1">6</div>
+              <div style="font-size:10px;color:#de7909;font-weight:500;margin-top:6px">Awaiting countersign</div>
+            </div>
+            <div class="ops-pipe-card" onclick="navigatePage('contracts',true)">
+              <div style="font-size:10px;font-weight:600;color:#6a7282;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Contract Approved</div>
+              <div style="font-size:26px;font-weight:700;color:#0f172a;letter-spacing:-.5px;line-height:1">3</div>
+              <div style="font-size:10px;color:#22c55e;font-weight:500;margin-top:6px">Signed &amp; approved</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Contracts + Compliance Items -->
+        <div class="hr-grid-2">
+          <div class="hr-section">
+            <div class="hr-section-header">
+              <div class="hr-section-title">Active Contracts</div>
+              <a href="javascript:void(0)" class="hr-section-link" onclick="navigatePage('contracts',true)">View all</a>
+            </div>
+            <table class="hr-leave-table">
+              <thead>
+                <tr>
+                  <th>Contract</th>
+                  <th>Country</th>
+                  <th>Type</th>
+                  <th>Stage</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="cursor:pointer" onclick="navigatePage('contracts',true)">
+                  <td class="hr-emp-name">Netherlands EOR – Anika</td>
+                  <td>Netherlands</td>
+                  <td>EOR</td>
+                  <td><span class="lp-status-badge approved">Ready for Payroll</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('contracts',true)">
+                  <td class="hr-emp-name">India Contractor – Rahul</td>
+                  <td>India</td>
+                  <td>Contractor</td>
+                  <td><span class="lp-status-badge approved">Ready for Payroll</span></td>
+                </tr>
+
+                <tr style="cursor:pointer" onclick="navigatePage('contracts',true)">
+                  <td class="hr-emp-name">UK EOR – Owen</td>
+                  <td>United Kingdom</td>
+                  <td>EOR</td>
+                  <td><span class="lp-status-badge pending">Contract Sent</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('contracts',true)">
+                  <td class="hr-emp-name">Germany PEO – Nora</td>
+                  <td>Germany</td>
+                  <td>PEO</td>
+                  <td><span class="lp-status-badge pending">Proposal Sent</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="hr-section">
+            <div class="hr-section-header">
+              <div class="hr-section-title">Compliance Items</div>
+              <a href="javascript:void(0)" class="hr-section-link" onclick="navigatePage('compliance',true)">View all</a>
+            </div>
+            <table class="hr-leave-table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Category</th>
+                  <th>Blocking</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="cursor:pointer" onclick="navigatePage('compliance',true)">
+                  <td class="hr-emp-name">Employee KYC Review</td>
+                  <td>Documents</td>
+                  <td>Yes</td>
+                  <td><span class="lp-status-badge pending">Pending</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('compliance',true)">
+                  <td class="hr-emp-name">Work Authorization</td>
+                  <td>Statutory</td>
+                  <td>Yes</td>
+                  <td><span class="lp-status-badge pending">Evidence Uploaded</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('compliance',true)">
+                  <td class="hr-emp-name">Tax Registration</td>
+                  <td>Payroll</td>
+                  <td>Yes</td>
+                  <td><span class="lp-status-badge pending">Pending</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('compliance',true)">
+                  <td class="hr-emp-name">Policy Acknowledgement</td>
+                  <td>Policy</td>
+                  <td>No</td>
+                  <td><span class="lp-status-badge pending">Reopened</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="navigatePage('compliance',true)">
+                  <td class="hr-emp-name">Statutory Filing Check</td>
+                  <td>Entity</td>
+                  <td>No</td>
+                  <td><span class="lp-status-badge approved">Completed</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pending Entities -->
+        <div class="hr-section">
+          <div class="hr-section-header">
+            <div class="hr-section-title">Pending Entities</div>
+            <a href="#" class="hr-section-link">View all entities</a>
+          </div>
+          <table class="hr-leave-table">
+            <thead>
+              <tr>
+                <th>Entity Name</th>
+                <th>Country</th>
+                <th>Type</th>
+                <th>Blocker</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="hr-emp-name">ADT Spain S.L.</td>
+                <td>Spain</td>
+                <td>EOR</td>
+                <td>Registration documents pending</td>
+                <td><span class="lp-status-badge pending">Pending</span></td>
+              </tr>
+              <tr>
+                <td class="hr-emp-name">ADT Brazil Ltda.</td>
+                <td>Brazil</td>
+                <td>PEO</td>
+                <td>Tax ID verification required</td>
+                <td><span class="lp-status-badge pending">Needs Review</span></td>
+              </tr>
+              <tr>
+                <td class="hr-emp-name">ADT Singapore Pte.</td>
+                <td>Singapore</td>
+                <td>EOR</td>
+                <td>Compliance check in progress</td>
+                <td><span class="lp-status-badge pending">In Review</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- ENTITY OWNER DASHBOARD VIEW -->
+      <div class="dashboard-view" id="entity-owner-view">
+        <div class="hr-header">
+          <div class="hr-header-title">Entity Owner Dashboard</div>
+          <div class="hr-header-desc">Full visibility into your entity — workforce, contracts, compliance, invoices, tickets, and team access.</div>
+        </div>
+
+        <!-- Stat cards — 10 tiles on the standard track: 4 / 4 / 2.
+             (Was 7 cards at 289px then a 3-col row at 389px.) -->
+        <div class="hr-band"><span class="hr-band-title">Key Metrics</span><span class="hr-band-rule"></span></div>
+        <div class="hr-stat-grid">
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Total Workforce</div>
+            <div class="hr-stat-number">148</div>
+            <div class="hr-stat-sub">Direct + Global Employees</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Tickets</div>
+            <div class="hr-stat-number">14</div>
+            <div class="hr-stat-sub orange">5 high priority</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Compliance Items</div>
+            <div class="hr-stat-number">9</div>
+            <div class="hr-stat-sub orange">3 pending review</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Contracts</div>
+            <div class="hr-stat-number">25</div>
+            <div class="hr-stat-sub green">Active across entity</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Pending Invoices</div>
+            <div class="hr-stat-number">7</div>
+            <div class="hr-stat-sub orange">Awaiting client payment</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Paid Invoices</div>
+            <div class="hr-stat-number">43</div>
+            <div class="hr-stat-sub green">Cleared this cycle</div>
+          </div>
+          <!-- No Payroll Status card - see the note on #employee-view. -->
+          <div class="hr-stat-card is-static">
+            <div class="hr-stat-label">Payroll Blockers</div>
+            <div class="hr-stat-number">4</div>
+            <div class="hr-stat-sub orange">Resolve before payroll run</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Pending Approvals</div>
+            <div class="hr-stat-number">6</div>
+            <div class="hr-stat-sub orange">Items waiting for action</div>
+          </div>
+          <div class="hr-stat-card is-link" role="button" tabindex="0">
+            <div class="hr-stat-label">Escalated Tickets</div>
+            <div class="hr-stat-number">3</div>
+            <div class="hr-stat-sub orange">Needs priority attention</div>
+          </div>
+          <div class="hr-stat-card is-static">
+            <div class="hr-stat-label">Expiring Documents</div>
+            <div class="hr-stat-number">5</div>
+            <div class="hr-stat-sub orange">Expiring in next 30 days</div>
+          </div>
+        </div>
+
+        <!-- Entity Setup Progress -->
+        <div class="hr-section" style="margin-bottom:22px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+            <div>
+              <div style="font-size:15px;font-weight:700;color:#0f172a;margin-bottom:3px">Entity Setup Progress</div>
+              <div style="font-size:12px;color:#6a7282">Complete these steps to <a href="#" style="color:#de7909;text-decoration:none;font-weight:500">activate full platform capabilities</a></div>
+            </div>
+            <div style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;padding:5px 16px;font-size:12px;font-weight:600;color:#0f172a;white-space:nowrap;align-self:center">5 of 5 Complete</div>
+          </div>
+          <div style="margin-bottom:16px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <span style="font-size:11px;color:#6a7282;font-weight:500">Overall Progress</span>
+              <span style="font-size:11px;color:#0f172a;font-weight:600">100%</span>
+            </div>
+            <div style="background:#e5e7eb;border-radius:99px;height:6px;overflow:hidden">
+              <div style="background:#334155;width:100%;height:100%;border-radius:99px;transition:width .4s ease"></div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px">
+              <div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#0f172a;line-height:1.3">Business Details</div>
+                <div style="font-size:11px;color:#16a34a;font-weight:500;margin-top:3px">Completed</div>
+              </div>
+            </div>
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px">
+              <div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#0f172a;line-height:1.3">Company Structure</div>
+                <div style="font-size:11px;color:#16a34a;font-weight:500;margin-top:3px">Completed</div>
+              </div>
+            </div>
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px">
+              <div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#0f172a;line-height:1.3">Bank Details</div>
+                <div style="font-size:11px;color:#16a34a;font-weight:500;margin-top:3px">Completed</div>
+              </div>
+            </div>
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px">
+              <div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#0f172a;line-height:1.3">Add First Employee</div>
+                <div style="font-size:11px;color:#16a34a;font-weight:500;margin-top:3px">Completed</div>
+              </div>
+            </div>
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px">
+              <div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#0f172a;line-height:1.3">Setup Teams</div>
+                <div style="font-size:11px;color:#16a34a;font-weight:500;margin-top:3px">Completed</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action cards — 4 in one row -->
+        <div class="hr-band"><span class="hr-band-title">Quick Actions</span><span class="hr-band-rule"></span></div>
+        <div class="hr-actions" style="grid-template-columns:repeat(4,1fr)">
+          <a href="#" class="hr-action-card" style="text-decoration:none;color:inherit">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">Manage Entity</div>
+              <div class="hr-action-desc">Update entity profile, locations, and business settings</div>
+            </div>
+          </a>
+          <a href="javascript:void(0)" class="hr-action-card" style="text-decoration:none;color:inherit" onclick="navigatePage('support-tickets',true)">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">Support Center</div>
+              <div class="hr-action-desc">View and resolve support tickets for your entity</div>
+            </div>
+          </a>
+          <a href="javascript:void(0)" class="hr-action-card" style="text-decoration:none;color:inherit" onclick="navigatePage('compliance',true)">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">Compliance Hub</div>
+              <div class="hr-action-desc">Track statutory, document, and policy compliance</div>
+            </div>
+          </a>
+          <a href="javascript:void(0)" class="hr-action-card" style="text-decoration:none;color:inherit" onclick="navigatePage('all-users',true)">
+            <div class="hr-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div class="hr-action-text">
+              <div class="hr-action-name">Users &amp; Roles</div>
+              <div class="hr-action-desc">Manage permissions for your entity's team</div>
+            </div>
+          </a>
+        </div>
+
+      </div>
+  </div>
+</div>
+
+<!-- ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢Ãƒâ€šÃ‚Â AGENT EMPTY ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢Ãƒâ€šÃ‚Â -->
+<div id="v-agent-empty" class="view">
+  <canvas id="am-webgl-canvas"></canvas>
+  <div class="topbar am-topbar-glass" id="agent-topbar-empty"></div>
+  <div class="agent-empty-center">
+    <div style="text-align:center">
+      <div class="we-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="1.8"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"></path></svg></div>
+      <h1 style="font-size:24px;font-weight:700;margin-bottom:6px">What can I help you with?</h1>
+      <p style="font-size:13px;color:var(--gray);max-width:400px;line-height:1.5">Ask me to create contracts, run payroll checks, fetch compliance data and more.</p>
+    </div>
+    <div class="actions-grid" id="qa-grid"></div>
+    <div class="input-area" id="inp-empty"></div>
+  </div>
+</div>
+
+<!-- ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢Ãƒâ€šÃ‚Â AGENT ACTIVE ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢Ãƒâ€šÃ‚Â -->
+<div id="v-agent-active" class="view">
+  <div class="topbar" id="agent-topbar-active"></div>
+  <div class="content-area">
+    <div class="sidebar collapsed" id="agent-sb"></div>
+    <div id="agent-chat-col" style="display:flex;flex-direction:column;flex:0 0 380px;border-right:1px solid var(--border)">
+      <div class="chat-area" id="agent-chat"></div>
+      <div class="input-area" id="inp-active"></div>
+    </div>
+    <div class="form-col" id="form-col" style="display:none"></div>
+  </div>
+</div>
+
+<script src="js/contract-types.js"></script>
+<script src="js/core.js"></script>
+<script src="js/contract-events.js"></script>
+<!-- After core.js: it registers its eight statuses into SB_STATUS_TONE and
+     reads statusClass() at parse time. Before pages.js, which renders both
+     employee Logs tabs through renderEmpLogsTab(). -->
+<script src="js/employee-lifecycle.js"></script>
+<!-- After core.js for apCS/apCD and teamsData; before renderer.js, which
+     routes page==="employee-add" to buildAddEmployeeHTML(). -->
+<script src="js/employee-add.js"></script>
+<!-- Before pages.js only for tidiness: the timesheet builders call
+     tsxExportBtn() at RENDER time, long after every file here has parsed. -->
+<script src="js/ts-export.js"></script>
+<!-- Owns the Attendance tab body that renderCsSidebar() calls into, and apMS.
+     Order is immaterial: both are called at render time. -->
+<script src="js/attendance-settings.js"></script>
+<!-- Reads holidaysData and hdEntityRows() from core.js at render time. -->
+<script src="js/optional-holidays.js"></script>
+<!-- Read by the timesheet grid and day panel at render time; governed by
+     csAtt (attendance-settings.js) and the entity holiday calendar. -->
+<script src="js/attendance-request.js"></script>
+<!-- Owns the Leaves tab body renderCsSidebar() calls into. Borrows the
+     generic form helpers from css/attendance-settings.css; adds no CSS. -->
+<script src="js/leave-settings.js"></script>
+<!-- Reads csAtt (the shift and its grace) and the entity holiday calendar. -->
+<script src="js/day-status.js"></script>
+<!-- Owns the Module Control tab body renderCsSidebar() calls into; writes its
+     change history into csLogsData (core.js) at save time. -->
+<script src="js/module-control.js"></script>
+<script src="js/pages.js"></script>
+<!-- After pages.js (it calls apCD, showToast and aiGenCommercial) and before
+     renderer.js, which dispatches contract-immigration and contract-contractor
+     to the two builders in here. -->
+<script src="js/contract-intake.js"></script>
+<!-- Pay Run and Create Invoice forms. After pages.js (customSelect, apCD,
+     lpLanded) and before renderer.js, whose listings read their open flags. -->
+<script src="js/pay-create.js"></script>
+<!-- Invoice Management Phase 2. After pages.js and pay-create.js: it renders
+     into their panels at render time and reuses their helpers. -->
+<script src="js/invoice-mgmt.js"></script>
+<script src="js/client-portal.js"></script>
+<script src="js/cs-agreements.js"></script>
+<script src="js/renderer.js"></script>
+<!-- After renderer.js: it enhances what the renderer paints, and needs the
+     page data arrays and open*Sidebar handlers to already exist. -->
+<script src="js/quick-actions.js"></script>
+<!-- Reads layout only. The action column is pinned in CSS and stays pinned
+     without this; all this decides is whether the edge shadow is earned. -->
+<script src="js/sticky-actions.js"></script>
+<!-- Also layout-only: moves the detail panel's active-tab box between tabs. -->
+<script src="js/tab-slide.js"></script>
+<script>
+function switchDashboard(tab){
+  window.activeDashboardTab=tab;
+  document.querySelectorAll('.tab-btn').forEach(function(t){
+    var isActive=t.dataset.tab===tab;
+    t.classList.toggle('active',isActive);
+    if(isActive)t.scrollIntoView({inline:'nearest',block:'nearest',behavior:'smooth'});
+  });
+  document.querySelectorAll('.dashboard-view').forEach(function(v){v.classList.toggle('active',v.id===tab+'-view');});
+  // The compliance dashboard's cards and listing are built from data, not
+  // markup, so they have to be (re)rendered whenever this tab is shown.
+  if(tab==='opendhi-compliance'&&typeof renderOcaDashboard==='function')renderOcaDashboard();
+  if(tab==='csm'&&typeof renderCsmDashCards==='function')renderCsmDashCards();
+}
+function scrollDashboardTabs(dir){
+  var el=document.getElementById('dashboard-tabs');
+  if(!el)return;
+  el.scrollBy({left:dir*260,behavior:'smooth'});
+}
+function initDashboardTabsBar(){
+  var el=document.getElementById('dashboard-tabs');
+  if(!el||el.dataset.tabsInit)return;
+  el.dataset.tabsInit='1';
+  var wrap=el.closest('.dashboard-tabs-wrap');
+  var left=wrap&&wrap.querySelector('.dt-edge-left');
+  var right=wrap&&wrap.querySelector('.dt-edge-right');
+  function updateEdges(){
+    if(!left||!right)return;
+    left.classList.toggle('show',el.scrollLeft>4);
+    right.classList.toggle('show',el.scrollLeft+el.clientWidth<el.scrollWidth-4);
+  }
+  el.addEventListener('scroll',updateEdges);
+  el.addEventListener('wheel',function(e){
+    if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){el.scrollLeft+=e.deltaY;e.preventDefault();}
+  },{passive:false});
+  window.addEventListener('resize',updateEdges);
+  requestAnimationFrame(updateEdges);
+}
+(function(){
+  var root=document.getElementById('adt-content');
+  if(root)new MutationObserver(initDashboardTabsBar).observe(root,{childList:true});
+  initDashboardTabsBar();
+})();
+</script>
+
+
+
+<style id="__om-edit-overrides">
+#form-col .section-block .selected { background-color: rgb(255, 253, 250) !important }
+#form-col .info-box { background-color: rgb(255, 251, 246) !important }
+#form-col .info-box { background-color: rgb(255, 253, 250) !important }
+</style>
+
+<!-- SEARCH OVERLAY -->
+<div id="search-overlay" onclick="if(event.target.id==='search-overlay'||event.target.classList.contains('search-backdrop'))closeSearch()">
+  <div class="search-backdrop"></div>
+  <div class="search-box">
+    <div class="search-input-row">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="search-input" type="text" placeholder="Search..." autocomplete="off" oninput="onSearchInput(this)" onkeydown="onSearchKeydown(event)">
+      <button class="search-clear" id="search-clear-btn" onclick="clearSearch()" title="Clear">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <!-- Results are built by buildPaletteResults() in renderer.js. The chips
+         that used to sit here were a fixed list of five guesses; the list
+         below is every destination and every create action in the product,
+         filtered as you type. -->
+    <div class="search-results" id="search-results"></div>
+    <div class="search-footer">
+      <kbd>&uarr;</kbd><kbd>&darr;</kbd> to move &nbsp; <kbd>Enter</kbd> to open &nbsp; <kbd>Esc</kbd> to close
+    </div>
+  </div>
+</div>
+
+<!-- CONTRACTS MODAL -->
+<div id="ct-modal-overlay" class="ct-modal-overlay" style="display:none" onclick="if(event.target===this)closeCtModal()"></div>
+
+<!-- AI TOAST NOTIFICATIONS -->
+<div id="ai-toast-stack" class="ai-toast-stack"></div>
+
+<!-- COST CALCULATOR MODAL -->
+<div id="cost-calc-overlay" class="cost-calc-overlay hidden" onclick="if(event.target===this)closeCostCalculator()">
+  <div class="cost-calc-panel">
+    <div class="cost-calc-header">
+      <div>
+        <div class="cost-calc-title">Cost Calculator</div>
+        <div class="cost-calc-sub">Powered by Compliance Hub &middot; Employment cost estimation</div>
+      </div>
+      <button class="cost-calc-close" onclick="closeCostCalculator()">&#x2715;</button>
+    </div>
+    <div class="cost-calc-tabs" id="cc-tabs"></div>
+    <div class="cost-calc-body">
+      <div id="cc-loader" class="cc-loader hidden">
+        <div class="cc-spinner"></div>
+        <div class="cc-loader-text">Fetching data from Compliance Hub&#8230;</div>
+      </div>
+      <div id="cc-content" class="cc-content"></div>
+    </div>
+  </div>
+</div></body></html>

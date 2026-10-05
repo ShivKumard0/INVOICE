@@ -1,0 +1,39 @@
+/* ══ COMPANY SETTINGS → MODULE CONTROL ══════════════════════════════════════
+   Additive: .mc-* selectors only. The switch is main.css's .cs-toggle, the
+   ticks are leaves.css's .hd-check, the section rules are
+   attendance-settings.css's .csa-sub. What is here is the card a
+   module sits in and the checklist it opens.
+   ========================================================================== */
+.mc-count{font-size:12px;font-weight:600;color:var(--gray)}
+
+.mc-list{display:flex;flex-direction:column;gap:8px}
+.mc-card{background:#fff;border:1px solid var(--border);border-radius:var(--r-control);
+  transition:border-color .15s ease,box-shadow .15s ease}
+.mc-card.is-on:not(.is-locked){border-color:#cbd5e1}
+.mc-card-err{border-color:var(--st-bad-fg)!important;box-shadow:0 0 0 3px var(--st-bad-bg)}
+
+.mc-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 14px}
+.mc-info{min-width:0;flex:1}
+/* The sidebar's own icon for the module, in the sidebar's grey. */
+.mc-ico{width:30px;height:30px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:var(--r-control);background:var(--light);color:var(--gray)}
+.mc-ico svg{width:16px;height:16px}
+.mc-card.is-on:not(.is-locked) .mc-ico{color:var(--navy)}
+.mc-name{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;font-weight:600;color:var(--navy)}
+.mc-desc{font-size:11.5px;color:var(--gray);margin-top:2px}
+.mc-tag{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;
+  padding:2px 8px;border-radius:var(--r-status);background:var(--st-idle-bg);color:var(--navy)}
+.mc-tag svg{width:10px;height:10px}
+
+/* Locked rows: on, and visibly not a control. */
+.mc-card.is-locked{background:var(--light)}
+.mc-card.is-locked .cs-toggle{opacity:.55;cursor:not-allowed}
+/* The theme's black, not main.css's green, for a switch that is on. */
+.mc-form .cs-toggle input:checked+.cs-toggle-slider{background:var(--btn-accent,#1a1a1a)}
+
+/* The checklist a module opens once it is switched on. */
+.mc-subs{display:none;grid-template-columns:1fr 1fr;gap:8px;padding:10px 14px 12px;border-top:1px solid #f1f5f9}
+.mc-card.is-on .mc-subs{display:grid;animation:mc-subs-in var(--t-base,260ms) var(--e-out,ease) both}
+.mc-check{height:36px;justify-content:flex-start;white-space:normal;line-height:1.25}
+@keyframes mc-subs-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+@media (max-width:640px){.mc-subs{grid-template-columns:1fr}}

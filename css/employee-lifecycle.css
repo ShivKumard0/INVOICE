@@ -1,0 +1,96 @@
+/* ══ EMPLOYEE LIFECYCLE ════════════════════════════════════════════════════
+   The Logs tab itself adds NO styles — it is the shared .lp-logs-* timeline
+   and form from leaves.css, exactly as the Compliance, Rates & Rules,
+   Payheads and Holidays panels render it.
+
+   All that is left is the fallout from the status vocabulary getting longer:
+   eight major statuses instead of Active/Inactive, one of them four words.
+   The status CELL needed no rule in the end (see below); only the filter pill
+   did, because that one has to carry the full status. */
+
+/* NOTHING styles the status cell. empLifeBadge() swaps the four-word status
+   for its short label, and once the text is short .lp-status-badge already
+   does the rest - it is nowrap with a 68px floor, exactly as on Contracts,
+   Teams and every other listing. An .emp-life-badge override here would only
+   make this one column a different size from all of them. */
+
+/* ── The per-status fields in the log form ─────────────────────────────────
+   They sit between the Status dropdown and the Comment box and swap with the
+   selected status. THEY ARE NOT A PANEL. This was a grey sub-card with the
+   status as a heading, the owning team as a chip and a dashed footnote about
+   what the move unlocks - a small second form embedded in the middle of the
+   first, which no other module's log form has. It is now nothing but the
+   fields themselves, wearing .lp-logs-form-label like the two controls they
+   sit between, so the whole panel is one form. The wrapper is a plain block
+   and exists only so the dropdown has something to show and hide. */
+/* No `display` here on purpose. The wrapper is shown and hidden with the
+   `hidden` ATTRIBUTE, and a class rule setting display:block outranks the
+   browser's [hidden]{display:none} - which silently showed all twelve blocks
+   at once. A div is display:block already; say nothing and hidden works. */
+.emp-log-input{margin-bottom:12px}
+.emp-log-input:empty{margin:0}
+/* The tick-lists: which documents failed (Verification Failed), and the two
+   "Done" lists at Onboarding Setup Completed and Exit Clearance Completed. */
+.emp-log-list{display:flex;flex-direction:column}
+.emp-log-check{display:flex;align-items:flex-start;gap:8px;padding:4px 2px;cursor:pointer;
+  font-size:12px;color:#374151;line-height:1.4;user-select:none}
+.emp-log-check:hover{color:#1e293b}
+.emp-log-check input{position:absolute;opacity:0;width:0;height:0}
+.emp-log-box{width:15px;height:15px;border-radius:4px;border:1.5px solid #cbd5e1;background:#fff;
+  display:flex;align-items:center;justify-content:center;color:transparent;flex-shrink:0;
+  margin-top:1px;transition:.15s}
+.emp-log-check input:checked+.emp-log-box{background:var(--st-ok-fg);border-color:var(--st-ok-fg);color:#fff}
+.emp-log-check input:focus-visible+.emp-log-box{box-shadow:0 0 0 3px rgba(148,163,184,.35)}
+/* Mandatory marker matches .lp-logs-form-req above it. */
+.emp-log-check b{color:#ef4444;font-weight:700;margin-left:3px}
+/* A labelled list (the failed-documents one) needs air under its heading and
+   above whatever field follows it. */
+.emp-log-list+.emp-log-fields{margin-top:11px}
+
+/* Typed / picked values — the Offboarding block, and the rejection reason */
+.emp-log-fields{display:flex;flex-direction:column;gap:10px}
+.emp-log-text,.emp-log-textarea{width:100%;box-sizing:border-box;border:1.5px solid #e2e8f0;
+  border-radius:var(--r-control);background:#fff;font-family:inherit;font-size:12.5px;color:#1e293b;
+  padding:8px 10px;outline:none;transition:.15s}
+.emp-log-textarea{height:62px;resize:none;line-height:1.45}
+.emp-log-text:focus,.emp-log-textarea:focus{border-color:#94a3b8}
+/* The shared select and date controls run full width in here and shrink to the
+   panel's type scale — the log form is half a sidebar, not a page form. */
+.emp-log-field .cs-trigger,.emp-log-field .cd-trigger{height:36px;font-size:12.5px}
+
+/* The standing notice: the record holds documents that have not come back. */
+.emp-log-alert{display:flex;align-items:flex-start;gap:7px;
+  border-radius:8px;padding:9px 11px;font-size:11.5px;line-height:1.45;margin-bottom:12px;
+  background:var(--st-bad-bg);border:1px solid var(--st-bad-bd);color:var(--st-bad-fg)}
+.emp-log-alert svg{flex-shrink:0;margin-top:1px}
+/* A timeline row that lists what has to come back. Same shape as the comment
+   row it sits under, tinted so it is not read as more prose. */
+.lp-log-comment-row.is-bad{background:var(--st-bad-bg);color:var(--st-bad-fg);margin-top:5px}
+.lp-log-comment-row.is-bad .lp-log-comment-label{color:var(--st-bad-fg);opacity:.75}
+
+/* The filter pill still carries the FULL status, because the option value is
+   what gets matched against the row. .lp-filter-bar-row sizes a pill to its label,
+   so cap the trigger and let the dropdown — which is where you actually read
+   the options — open wider than it. */
+#csw-de-f-status .cs-trigger,#csw-ge-f-status .cs-trigger{max-width:210px}
+#csw-de-f-status .cs-value,#csw-ge-f-status .cs-value{min-width:0;overflow:hidden;text-overflow:ellipsis}
+#csw-de-f-status .cs-dropdown,#csw-ge-f-status .cs-dropdown{min-width:232px}
+
+/* ── Status journey menu + popup ───────────────────────────────────────────
+   The row menu and the popup are the Contracts listing's (.ct-action-*,
+   .ct-modal.ct-sm). The only thing employees add is the rejection branch: a
+   step that sits beside the ladder, not on it, so it wears the bad tone and a
+   cross instead of a number. */
+.ct-act-item.branch{padding-left:26px;font-size:12px}
+.ct-act-item.branch.next{color:var(--st-bad-fg)}
+.ct-act-item.branch.current{color:var(--st-bad-fg)}
+.ct-act-step.branch{background:var(--st-bad-bg);color:var(--st-bad-fg)}
+.emp-act-menu{min-width:240px}
+/* The per-status blocks carry the Logs tab's labels; inside the popup they
+   read at the popup's own label size. */
+.emp-sm .lp-logs-form-label{font-size:12px;color:var(--navy);margin-bottom:6px}
+.emp-sm .emp-log-input{margin-bottom:0}
+.emp-sm .emp-log-alert{margin-bottom:14px}
+/* Seven of the twelve statuses ask for nothing; their empty slot must not
+   leave a grid gap between Status and Comment. */
+.emp-sm .emp-sm-inputs:not(:has(.emp-log-input:not([hidden]):not(:empty))){display:none}
