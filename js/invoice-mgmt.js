@@ -1277,10 +1277,31 @@ function imsIvPick(v){
    order's Logs tab, so the order carries the history of everything billed
    under it. */
 // On the order's Logs an entry is headed by what happened to the invoice ("Invoice Sent").
-function imsInvLogHead(status){return /^Advance Payment Invoice/.test(status)?status:'Invoice '+status;}
+function imsInvLogHead(status){return /^Advance Payment Invoice/.test(status)||IMS_FLOW.indexOf(status)>=0?status:'Invoice '+status;}
+/* Logs show the updated status with its comment: a Payment Status change is
+   headed by the new status (Unpaid / Overdue / Paid / Closed) and carries only
+   the comment; the move back to "—" and the separate Payment Received line are
+   dropped. Returns null for an entry that is not shown. */
+function imsStatusEntry(i,l){
+  if(l.status==='Payment Received')return null;
+  if(l.status==='Cancelled')return Object.assign({},l,{status:'Closed'});
+  if(l.status==='Closed')return Object.assign({},l,{action:String(l.action).replace(/^Paid → Closed\.\s*/,'')});
+  if(l.status!=='Payment Status Changed')return l;
+  const m=/^\S+ → (\S+?)\.?(?: · (.*))?$/.exec(l.action||'');if(!m||m[1]==='—')return null;
+  const to=m[1];
+  const rest=(m[2]||'').replace(/\s*·?\s*Outstanding [A-Z]{3} [\d,.]+\.?/g,'').replace(/^[A-Z]{3} [\d,.]+ received\.\s*/,'').replace(/^\s*·\s*/,'').trim();
+  let c=rest;
+  if(to==='Unpaid'&&!c)c='Invoice sent · due on '+imsDate(imsInvDue(i))+'.';
+  if(to==='Overdue'&&!c)c='Due Date '+imsDate(imsInvDue(i))+' passed.';
+  if(to==='Overdue'&&/had already passed/.test(c))c='Due Date '+imsDate(imsInvDue(i))+' had already passed when sent.';
+  if(to==='Paid'&&!c)c='Full payment received.';
+  return Object.assign({},l,{status:to,action:c.replace(/^Due Date .* passed$/,function(x){return x+'.';})});
+}
 function imsInvLog(i,status,text,user){
   const s=stampNow();
-  (i.logs=i.logs||[]).unshift({date:s.date,time:s.time,user:user||CURRENT_USER,status:status,action:text});
+  const e=imsStatusEntry(i,{date:s.date,time:s.time,user:user||CURRENT_USER,status:status,action:text});if(!e)return;
+  status=e.status;text=e.action;
+  (i.logs=i.logs||[]).unshift(e);
   const orderId=Object.keys(imsInvData).find(function(k){return (imsInvData[k]||[]).indexOf(i)>=0;});
   const p=orderId&&typeof paymentsData!=='undefined'?paymentsData.find(function(x){return x.orderId===orderId;}):null;
   if(p&&typeof pmLogsData!=='undefined'){
@@ -1911,6 +1932,17 @@ function imsMergeLogs(existing,added){
     const p=paymentsData.find(function(x){return x.orderId===orderId;});if(!p)return;
     const added=[];
     (imsInvData[orderId]||[]).forEach(function(i){
+      // A seeded Paid takes its bank reference from the Payment Received line as its comment.
+      const rcv=(i.logs||[]).filter(function(l){return l.status==='Payment Received';});
+      i.logs=(i.logs||[]).map(function(l){
+        const e=imsStatusEntry(i,l);
+        if(e&&e.status==='Paid'&&l.status==='Payment Status Changed'){
+          const r=rcv.find(function(x){return x.date===l.date;});
+          const ref=r&&/ref (\S+)/.exec(r.action);
+          return Object.assign(e,{user:IMS_FO,action:ref?'Payment received · '+ref[1].replace(/\.$/,'')+'.':e.action});
+        }
+        return e;
+      }).filter(Boolean);
       (i.logs||[]).forEach(function(l){
         added.push({date:l.date,time:l.time,user:l.user,status:imsInvLogHead(l.status),
           action:(i.no||(i.type==='Manual'?'Manual invoice (draft)':'Invoice (draft)'))+' · '+imsMoney(i.currency,imsInvTotal(i))+'. '+l.action});
