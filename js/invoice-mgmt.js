@@ -95,7 +95,11 @@ function imsRuleRow(label,key,on,last,edit,words){
   return '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0'+(last?'':';border-bottom:1px solid #f1f5f9')+'">'
     +'<span style="font-size:13px;color:var(--navy)">'+label+'</span>'
     +(edit
-      ?'<label class="cs-toggle"><input type="checkbox" id="ims-sw-'+key+'"'+(on?' checked':'')+' onchange="imsPayDirty()"><span class="cs-toggle-slider"></span></label>'
+      // with words, the current value sits left of the switch and follows it
+      ?(words?'<span style="display:flex;align-items:center;gap:12px"><span class="ims-onoff" id="ims-sw-'+key+'-val">'+(on?words[0]:words[1])+'</span>':'')
+        +'<label class="cs-toggle"><input type="checkbox" id="ims-sw-'+key+'"'+(on?' checked':'')
+        +' onchange="imsPayDirty()'+(words?';document.getElementById(\'ims-sw-'+key+'-val\').textContent=this.checked?\''+words[0]+'\':\''+words[1]+'\'':'')+'">'
+        +'<span class="cs-toggle-slider"></span></label>'+(words?'</span>':'')
       :imsOnOff(on,words))
   +'</div>';
 }
