@@ -80,7 +80,8 @@ let csPayEdit=false;
 let csPayEditTab='';      // which tab is in Edit: 'payroll' or 'payments'
 let csPayDraft=null;
 function imsPayClone(o){return JSON.parse(JSON.stringify(o));}
-function imsOnOff(on){return '<span class="ims-onoff">'+(on?'ON':'OFF')+'</span>';}
+// words: optional [on, off] text for the view value (default ON / OFF).
+function imsOnOff(on,words){words=words||['ON','OFF'];return '<span class="ims-onoff">'+(on?words[0]:words[1])+'</span>';}
 function imsPayEditing(tab){return csPayEdit&&csPayEditTab===tab;}
 // A tab header: Edit in view, the "Unsaved changes" chip while that tab is editing.
 function csPayrollHeaderAction(tab){
@@ -90,12 +91,12 @@ function csPayrollHeaderAction(tab){
     :'<button class="lp-sb-view-edit-btn" onclick="imsPayrollStartEdit(\''+tab+'\')">'+IMS_ICO.edit+' Edit</button>';
 }
 // One row of the switch cards - same markup as the tab has always used.
-function imsRuleRow(label,key,on,last,edit){
+function imsRuleRow(label,key,on,last,edit,words){
   return '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0'+(last?'':';border-bottom:1px solid #f1f5f9')+'">'
     +'<span style="font-size:13px;color:var(--navy)">'+label+'</span>'
     +(edit
       ?'<label class="cs-toggle"><input type="checkbox" id="ims-sw-'+key+'"'+(on?' checked':'')+' onchange="imsPayDirty()"><span class="cs-toggle-slider"></span></label>'
-      :imsOnOff(on))
+      :imsOnOff(on,words))
   +'</div>';
 }
 function imsCard(rows){return '<div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:4px 14px">'+rows+'</div>';}
@@ -132,7 +133,7 @@ function csPaymentsTabHTML(){
       +imsFc(IMS_ICO.doc,'Default Payment Term',imsEsc(m.paymentTerm)+(isCustom?' · '+imsDate(m.customDate):''))
       +'</div>';
   }
-  out+='<div style="margin-top:10px">'+imsCard(imsRuleRow('Allow Advance Payment','adv',m.allowAdvance,true,edit))+'</div>';
+  out+='<div style="margin-top:10px">'+imsCard(imsRuleRow('Allow Advance Payment','adv',m.allowAdvance,true,edit,['Enabled','Disabled']))+'</div>';
   if(edit)out+=imsPayActions();
   return out+'</div>';
 }
@@ -163,7 +164,7 @@ function imsPayrollSave(){
   csPayEdit=false;csPayEditTab='';csPayDraft=null;
   isbTab('cs',renderCsSidebar);
   if(tab==='payments')showToast('Payment settings saved','success',csPay.paymentTerm+' · '+(csPay.paymentTerm==='Custom'?'due '+imsDate(csPay.customDate):imsDaysText(imsTermDays(csPay.paymentTerm,csPay.customDays)))
-    +' · Advance Payment '+(csPay.allowAdvance?'ON':'OFF'));
+    +' · Advance Payment '+(csPay.allowAdvance?'Enabled':'Disabled'));
   else showToast('Payroll settings saved','success','Payroll Input Rules updated.');
 }
 // Leaving a tab leaves its Edit unsaved.
