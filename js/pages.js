@@ -1488,9 +1488,10 @@ function renderPmSidebar(){
     const clkSvg='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
     const timelineHTML=logs.length
       ?'<div class="lp-logs-timeline">'+logs.map((l,i,_all)=>'<div class="lp-log-row">'
-          +'<div class="lp-log-avatar-col"><div class="lp-log-avatar lp-log-avatar--'+logDotKey(_all,i,pmLogKey(l.status))+'">'+personSvg+'</div>'+(i<logs.length-1?'<div class="lp-log-connector"></div>':'')+'</div>'
+          +'<div class="lp-log-avatar-col"><div class="lp-log-avatar lp-log-avatar--'+(i===0?'info':'ok')+'">'+personSvg+'</div>'+(i<logs.length-1?'<div class="lp-log-connector"></div>':'')+'</div>'
           +'<div class="lp-log-card">'
-          +logHeadRow(_all,i,pmLogKey(l.status),l.status)
+          // Latest entry blue (current), every older one green (past).
+          +'<div class="lp-log-status-row"><span class="lp-log-dot lp-log-dot--'+(i===0?'info':'ok')+'"></span><span class="lp-log-status-text lp-log-status-text--'+(i===0?'info':'ok')+'">'+l.status+'</span></div>'
           +'<div class="lp-log-meta-row"><span class="lp-log-meta-item">'+personSvg+'<span>'+l.user+'</span></span><span class="lp-log-meta-item">'+calSvg+'<span>'+l.date+'</span></span><span class="lp-log-meta-item">'+clkSvg+'<span>'+l.time+'</span></span></div>'
           +'<div class="lp-log-comment-row"><span class="lp-log-comment-label">Comment:</span>'+l.action+'</div>'
           +'</div></div>').join('')+'</div>'
@@ -1504,9 +1505,9 @@ function renderPmSidebar(){
     // Opened from the row menu the form states the move it is about; opened from
     // the tab it is the plain "add a log" form it has always been.
     const headHTML=pmPendingStatus
-      ?'<div class="lp-logs-form-header"><span class="lp-log-dot lp-log-dot--'+pmLogKey(pmPendingStatus)+'"></span>Next: '+pmPendingStatus+'</div>'
+      ?'<div class="lp-logs-form-header"><span class="lp-log-dot lp-log-dot--info"></span>Next: '+pmPendingStatus+'</div>'
        +'<p class="lp-logs-form-sub">Move order '+p.orderId+' from '+p.invoiceStatus+' to '+pmPendingStatus+' and record why.</p>'
-      :'<div class="lp-logs-form-header"><span class="lp-log-dot lp-log-dot--'+pmLogKey(p.invoiceStatus)+'"></span>'+p.invoiceStatus+'</div>'
+      :'<div class="lp-logs-form-header"><span class="lp-log-dot lp-log-dot--info"></span>'+p.invoiceStatus+'</div>'
        +'<p class="lp-logs-form-sub">Update invoice status and add a comment</p>';
     const formHTML='<div class="lp-logs-form">'
       +headHTML
@@ -1908,7 +1909,8 @@ function ctLogRowHTML(rows,i){
   const r=rows[i];
   /* An override keeps the bad tone whatever stage it landed on - it is the
      move that is exceptional, not the destination. */
-  const k=ctIsOverrideRow(r)?'bad':(ctLogMoved(rows,i)?statusTone(r.status):'event');
+  // Latest entry blue (current), every older one green (past).
+  const k=i===0?'info':'ok';
   const meta=function(ico,txt){return '<span class="lp-log-meta-item">'+ico+'<span>'+txt+'</span></span>';};
   return '<div class="lp-log-row">'
     +'<div class="lp-log-avatar-col"><div class="lp-log-avatar lp-log-avatar--'+k+'">'+CT_LOG_ICO.person+'</div>'
@@ -1969,7 +1971,7 @@ function ctLogFormHTML(c){
     : (back?'Add a comment, or move this contract back to an earlier stage'
            :'Add a comment against this contract');
   return '<div class="lp-logs-form">'
-    +'<div class="lp-logs-form-header"><span class="lp-log-dot lp-log-dot--'+statusTone(c.status)+'"></span>'+c.status+'</div>'
+    +'<div class="lp-logs-form-header"><span class="lp-log-dot lp-log-dot--info"></span>'+c.status+'</div>'
     +'<p class="lp-logs-form-sub">'+sub+'</p>'
     /* The select also offers "Advance Payment" and its steps (FR5) - they do
        not move the contract; see imsCtLogOptions / imsCtLogPick in
