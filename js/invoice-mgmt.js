@@ -1359,7 +1359,7 @@ function imsManualHTML(m){
   // Same as the Advance Payment form: Preview on top, the FRD's Create → Save Draft → Generate below.
   const foot='<button class="ep-cancel-btn" onclick="imsClose()">Cancel</button>'
     +'<button class="ep-cancel-btn" onclick="imsSaveManual(false)">Save Draft</button>'
-    +'<button class="ep-save-btn" onclick="imsSaveManual(true)">Generate</button>';
+    +'<button class="ep-save-btn" onclick="imsSaveManual(true)">'+IMS_ICO.send+' Send</button>';
   return imsShell(m.invId?'Manual Invoice · Draft':'Create Manual Invoice',
     'Bill a charge outside the normal invoice run. Fields marked <span class="req">*</span> are required.',body,foot,false,
     imsBtn('Preview','imsManPreview()',false,IMS_ICO.eye));
@@ -1447,10 +1447,11 @@ function imsSaveManual(generate){
     imsInvLog(i,'Generated',(i.type==='Manual'?'Manual invoice ':'Invoice ')+i.no+' generated. Terms '+i.term+' · '+imsDaysText(imsInvDueDays(i))+' captured, due '+imsDate(i.dueDate)+'; financial values locked.');
     imsRcv={orderId:m.orderId,invId:i.id,sub:'details'};
   }else imsRcv={orderId:m.orderId,invId:null,sub:'details'};
-  imsModal=null;imsPaint();imsRcvRefresh();
-  showToast(generate?'Invoice generated':'Draft saved','success',generate
-    ?i.no+' · '+imsMoney(i.currency,imsInvTotal(i))+' · due '+imsDate(i.dueDate)
-    :'Manual invoice · '+imsMoney(i.currency,imsInvTotal(i))+'.');
+  imsModal=null;imsPaint();
+  // Send: generated and emailed to the client in one step (no compose screen).
+  if(generate){imsOpenSendInv(m.orderId,i.id);imsSendRun();return;}
+  imsRcvRefresh();
+  showToast('Draft saved','success','Manual invoice · '+imsMoney(i.currency,imsInvTotal(i))+'.');
 }
 
 function imsOpenInvPreview(orderId,invId){
