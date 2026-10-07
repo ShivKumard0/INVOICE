@@ -499,6 +499,16 @@ tr.lp-row-selected>td:first-child,
 .ct-act-step.done{background:var(--st-ok-bg);color:var(--st-ok-fg)}
 .ct-act-step.current{background:var(--orange);color:#fff}
 .ct-act-step.next{background:#f1f5f9;color:#64748b}
+/* Stage menus (any menu with steps): plain text, no step icons or numbers; the
+   menu hugs its longest option with the same padding on both sides; options
+   that can't be picked from here are greyed. */
+.ct-act-step{display:none}
+.ct-action-menu:has(.ct-act-step){min-width:0;width:max-content}
+.ct-action-menu:has(.ct-act-step) .ct-act-item{padding:8px 16px}
+.ct-action-menu:has(.ct-act-step) .ct-act-item:hover{padding-left:16px}
+.ct-action-menu:has(.ct-act-step) .ct-act-item.branch,.ct-action-menu:has(.ct-act-step) .ct-act-item.branch:hover{padding-left:28px}
+.ct-act-item.next:not([onclick]){color:#9ca3af;cursor:default}
+.ct-act-item.next:not([onclick]):hover{background:none;color:#9ca3af}
 .ct-sb-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:var(--r-status);font-size:11px;font-weight:600;border:1.5px solid var(--btn-stroke);white-space:nowrap}
 .ct-pending-stats{display:flex;gap:0;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#fff;flex-shrink:0}
 .ct-pending-stat{padding:12px 22px;text-align:center;border-right:1px solid var(--border)}
